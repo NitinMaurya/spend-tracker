@@ -1,0 +1,105 @@
+{
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Screens"
+    },
+    {
+      "id": "page-2",
+      "name": "System"
+    }
+  ],
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "Money",
+      "page": "page-1",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2280
+    },
+    {
+      "file": "Plan.dc.html",
+      "title": "Plan",
+      "page": "page-1",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 1500
+    },
+    {
+      "file": "Review.dc.html",
+      "title": "Data \u00b7 fix-ups",
+      "page": "page-1",
+      "x": 1560,
+      "y": 1640,
+      "w": 1440,
+      "h": 1320
+    },
+    {
+      "file": "Foundations.dc.html",
+      "title": "Foundations",
+      "page": "page-2",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2960
+    },
+    {
+      "file": "Evidence.dc.html",
+      "title": "Evidence drawer",
+      "page": "page-2",
+      "x": 1560,
+      "y": 0,
+      "w": 660,
+      "h": 980
+    }
+  ],
+  "annotations": [
+    {
+      "id": "ia",
+      "page": "page-1",
+      "x": -370,
+      "y": 40,
+      "w": 290,
+      "text": "Two destinations\n\nMoney and Plan. That is the whole navigation.\n\nToday, Spending and Cards were one question at three zoom levels, and splitting them made you carry the same period in your head across three screens. Plan is the only view that asks something else \u2014 it produces a decision, not a picture."
+    },
+    {
+      "id": "folded",
+      "page": "page-1",
+      "x": -370,
+      "y": 480,
+      "w": 290,
+      "text": "What folded where\n\nToday + Spending + Cards \u2192 Money, as four sections down one page: the glance, what you owe, where it went, every transaction.\n\nCards stop being a page. The four cards with nothing urgent collapse to one quiet table, and a card's statements, limit history and reported rewards move into a drawer.\n\nEvaluate \u2192 Plan. Statements + Review \u2192 Data."
+    },
+    {
+      "id": "scope",
+      "page": "page-1",
+      "x": -370,
+      "y": 940,
+      "w": 290,
+      "text": "One scope, one screen\n\nCollapsing the tabs makes the period control unambiguous: there is one, at the top, and everything below it obeys \u2014 except balances and limits, which say so, because a balance has no period.\n\nThe transaction browser keeps its own filters, since filtering is not the same act as scoping."
+    },
+    {
+      "id": "emphasis",
+      "page": "page-1",
+      "x": -370,
+      "y": 1360,
+      "w": 290,
+      "text": "Data is a utility, not a tab\n\nIt sits right-aligned with a count, because a chore should be surfaced by number rather than by permanent real estate.\n\nCORRECTION: an earlier version of this note claimed 24 uncategorised rows carried AED 464,285. That was wrong. Those rows sit on two bank accounts and a credit facility, all flagged include_in_spending = 0, so the engine correctly excludes them from spend. Real uncategorised card spend is zero and the queue is empty. Ranking the queue by value is still right -- the API already does it, weighted by money not row count -- just not for the reason given here."
+    },
+    {
+      "id": "palette",
+      "page": "page-2",
+      "x": -370,
+      "y": 40,
+      "w": 290,
+      "text": "Colour was computed, not judged\n\nThe shipped palette declares six categorical hues but carries five: --s3 and --s6 are both greens, 1.6 deltaE apart under deuteranopia, and --s6 has no dark step at all.\n\nEvery candidate sixth hue tested collided with an existing slot. Blue / orange / green passes all-pairs in both modes, so the categorical set is three \u2014 used only on Plan, where the cards genuinely are the subject."
+    }
+  ],
+  "launch": {
+    "view": "canvas",
+    "page": "page-1"
+  }
+}

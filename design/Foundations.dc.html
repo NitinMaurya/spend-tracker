@@ -1,0 +1,294 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4338ca; text-decoration: none; } a:hover { color: #4f46e5; }
+    .t { --bg:#fbfbfd; --surface:#ffffff; --surface2:#f7f8fb; --line:#e6e8f0; --hair:#eef0f6;
+      --ink:#14161f; --ink2:#565b70; --ink3:#6b7085; --mute:#9aa0b4;
+      --accent:#4f46e5; --accentInk:#4338ca; --accentSoft:#eeecfe;
+      --ok:#10795a; --okSoft:#e3f2ec; --warn:#96650f; --warnSoft:#fbf0dc; --bad:#b03328; --badSoft:#fbe9e7;
+      --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+      --shadow:0 1px 2px rgba(20,22,31,.04),0 1px 3px rgba(20,22,31,.06);
+      --shadowLg:0 2px 4px rgba(20,22,31,.04),0 16px 40px rgba(20,22,31,.10); }
+    .t.dark { --bg:#0d0e14; --surface:#171922; --surface2:#1d202b; --line:#272b38; --hair:#1f222d;
+      --ink:#eceef5; --ink2:#a2a8bd; --ink3:#8d93a8; --mute:#6e7489;
+      --accent:#8b83f7; --accentInk:#b4adfb; --accentSoft:#211f3d;
+      --ok:#6cc39c; --okSoft:#12291f; --warn:#d9a95f; --warnSoft:#2b2214; --bad:#e78477; --badSoft:#2e1a17;
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+      --shadowLg:0 2px 6px rgba(0,0,0,.35),0 20px 48px rgba(0,0,0,.45); }
+    .t { font-family:'Instrument Sans',ui-sans-serif,system-ui,sans-serif; background:var(--bg); color:var(--ink);
+      -webkit-font-smoothing:antialiased; }
+    .serif { font-family:'Instrument Serif',Georgia,'Times New Roman',serif; font-weight:400; }
+    .mono { font-family:'Geist Mono',ui-monospace,Menlo,monospace; }
+    .tnum { font-variant-numeric:tabular-nums; }
+    .eyebrow { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+    .sw { height:44px; border-radius:8px; border:1px solid var(--line); }
+    .rowline { border-top:1px solid var(--hair); }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); }
+    @keyframes riseIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    .rise { animation:riseIn .5s cubic-bezier(.22,.8,.3,1) both; }
+    @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+  </style>
+</helmet>
+<div class="t {{mode}}" style="width:1440px; padding:56px 0 72px;">
+  <div style="max-width:1120px; margin:0 auto; display:flex; flex-direction:column; gap:56px;">
+
+    <!-- masthead -->
+    <div class="rise" style="display:flex; flex-direction:column; gap:10px;">
+      <p class="eyebrow">Foundations</p>
+      <h1 class="serif" style="margin:0; font-size:44px; line-height:1.1; letter-spacing:-.01em;">The Ledger design system</h1>
+      <p style="margin:0; max-width:64ch; font-size:15px; line-height:1.6; color:var(--ink2);">A serif carries the voice, a sans carries the data, and a monospace carries the evidence. Every colour below is either validated by the palette checker or reserved for state — nothing is decorative.</p>
+    </div>
+
+    <!-- TYPE -->
+    <div class="rise" style="animation-delay:60ms; display:flex; flex-direction:column; gap:18px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <h2 class="serif" style="margin:0; font-size:24px;">Typography</h2>
+        <span style="font-size:13px; color:var(--ink3);">Instrument Serif · Instrument Sans · Geist Mono</span>
+      </div>
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:200px 1fr 200px; gap:0;">
+          <div style="padding:16px 20px; background:var(--surface2); border-bottom:1px solid var(--line);"><span class="eyebrow">Role</span></div>
+          <div style="padding:16px 20px; background:var(--surface2); border-bottom:1px solid var(--line);"><span class="eyebrow">Specimen</span></div>
+          <div style="padding:16px 20px; background:var(--surface2); border-bottom:1px solid var(--line);"><span class="eyebrow">Spec</span></div>
+
+          <div style="padding:20px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:14px; font-weight:500;">Hero figure</span><span style="font-size:12px; color:var(--ink3);">one per screen</span></div>
+          <div style="padding:20px; display:flex; align-items:center;"><span style="font-size:56px; font-weight:600; letter-spacing:-.03em; line-height:1;">AED 18,420</span></div>
+          <div class="mono" style="padding:20px; font-size:11px; line-height:1.7; color:var(--ink2);">Sans 600 · 56/1.0<br>-0.03em<br>proportional figures</div>
+
+          <div class="rowline" style="padding:20px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:14px; font-weight:500;">Page title</span><span style="font-size:12px; color:var(--ink3);">wayfinding</span></div>
+          <div class="rowline" style="padding:20px; display:flex; align-items:center;"><span class="serif" style="font-size:32px; line-height:1.15; letter-spacing:-.01em;">Where your money goes</span></div>
+          <div class="mono rowline" style="padding:20px; font-size:11px; line-height:1.7; color:var(--ink2);">Serif 400 · 32/1.15<br>-0.01em</div>
+
+          <div class="rowline" style="padding:20px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:14px; font-weight:500;">Section title</span><span style="font-size:12px; color:var(--ink3);">replaces the grey eyebrow</span></div>
+          <div class="rowline" style="padding:20px; display:flex; align-items:center;"><span class="serif" style="font-size:20px; line-height:1.3;">Biggest charges</span></div>
+          <div class="mono rowline" style="padding:20px; font-size:11px; line-height:1.7; color:var(--ink2);">Serif 400 · 20/1.3</div>
+
+          <div class="rowline" style="padding:20px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:14px; font-weight:500;">Body</span></div>
+          <div class="rowline" style="padding:20px; display:flex; align-items:center;"><span style="font-size:14px; line-height:1.5; color:var(--ink2);">Reconciled against the statement's own printed total.</span></div>
+          <div class="mono rowline" style="padding:20px; font-size:11px; line-height:1.7; color:var(--ink2);">Sans 400 · 14/1.5<br>ink2</div>
+
+          <div class="rowline" style="padding:20px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:14px; font-weight:500;">Data</span><span style="font-size:12px; color:var(--ink3);">columns only</span></div>
+          <div class="rowline" style="padding:20px; display:flex; align-items:center;"><span class="tnum" style="font-size:14px; font-weight:500;">6,412.50 · 11,980.00 · 1,110.05</span></div>
+          <div class="mono rowline" style="padding:20px; font-size:11px; line-height:1.7; color:var(--ink2);">Sans 500 · 14<br>tabular-nums</div>
+
+          <div class="rowline" style="padding:20px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:14px; font-weight:500;">Eyebrow</span><span style="font-size:12px; color:var(--ink3);">stat labels only</span></div>
+          <div class="rowline" style="padding:20px; display:flex; align-items:center;"><span class="eyebrow">Total payment due</span></div>
+          <div class="mono rowline" style="padding:20px; font-size:11px; line-height:1.7; color:var(--ink2);">Sans 600 · 11<br>0.08em caps</div>
+
+          <div class="rowline" style="padding:20px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:14px; font-weight:500;">Evidence</span><span style="font-size:12px; color:var(--ink3);">quotes, ids, versions</span></div>
+          <div class="rowline" style="padding:20px; display:flex; align-items:center;"><span class="mono" style="font-size:12px; color:var(--ink2);">enbd_flexi_v3 · 8113a1e6 · p.2 l.41</span></div>
+          <div class="mono rowline" style="padding:20px; font-size:11px; line-height:1.7; color:var(--ink2);">Geist Mono 400 · 12</div>
+        </div>
+      </div>
+      <p style="margin:0; max-width:78ch; font-size:13px; line-height:1.6; color:var(--ink3);">The serif is doing the job the ghost <span class="mono" style="font-size:12px;">--font-serif</span> in <span class="mono" style="font-size:12px;">ui.tsx</span> was written for and never given. Bricolage Grotesque retires: it was loaded to set exactly one number, and a display face on a hero figure reads as decoration.</p>
+    </div>
+
+    <!-- COLOR -->
+    <div class="rise" style="animation-delay:120ms; display:flex; flex-direction:column; gap:18px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <h2 class="serif" style="margin:0; font-size:24px;">Colour</h2>
+        <span style="font-size:13px; color:var(--ink3);">interface tokens · state is reserved</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px;">
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+          <span class="eyebrow">Surface &amp; ink</span>
+          <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--bg);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">bg</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--surface);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">surface</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--surface2);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">surface2</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--line);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">line</span></div>
+          </div>
+          <div class="rowline" style="padding-top:14px; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between;"><span style="font-size:14px; color:var(--ink);">ink — primary</span><span class="mono" style="font-size:11px; color:var(--ink3);">14.9:1</span></div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between;"><span style="font-size:14px; color:var(--ink2);">ink2 — secondary</span><span class="mono" style="font-size:11px; color:var(--ink3);">6.6:1</span></div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between;"><span style="font-size:14px; color:var(--ink3);">ink3 — muted <span style="color:var(--ok); font-weight:600;">raised</span></span><span class="mono" style="font-size:11px; color:var(--ink3);">4.9:1</span></div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between;"><span style="font-size:14px; color:var(--mute);">mute — hairlines &amp; icons, never text</span><span class="mono" style="font-size:11px; color:var(--ink3);">2.9:1</span></div>
+          </div>
+          <p style="margin:0; font-size:12px; line-height:1.6; color:var(--ink3);">Today's <span class="mono" style="font-size:11px;">--ink-3</span> is #8b90a4 — 3.2:1, below AA — and it carries real content. It splits: text moves to #6b7085, the old value stays as <span class="mono" style="font-size:11px;">mute</span> for rules and icons.</p>
+        </div>
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+          <span class="eyebrow">Accent &amp; state</span>
+          <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--accent);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">accent</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--ok);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">ok</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--warn);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">warn</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--bad);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">bad</span></div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; padding-top:4px;">
+            <span style="display:inline-flex; align-items:center; gap:6px; background:var(--okSoft); color:var(--ok); border-radius:10px; padding:5px 10px; font-size:12px; font-weight:600;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Reconciled</span>
+            <span style="display:inline-flex; align-items:center; gap:6px; background:var(--warnSoft); color:var(--warn); border-radius:10px; padding:5px 10px; font-size:12px; font-weight:600;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>Due in 8 days</span>
+            <span style="display:inline-flex; align-items:center; gap:6px; background:var(--badSoft); color:var(--bad); border-radius:10px; padding:5px 10px; font-size:12px; font-weight:600;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Rejected</span>
+            <span style="display:inline-flex; align-items:center; gap:6px; background:var(--accentSoft); color:var(--accentInk); border-radius:10px; padding:5px 10px; font-size:12px; font-weight:600;">Candidate</span>
+          </div>
+          <p style="margin:0; font-size:12px; line-height:1.6; color:var(--ink3);">State always ships colour <em>plus</em> a glyph and a word, so it survives colourblindness and greyscale print. State tokens are never reused as a series colour, and a series colour is never used for state.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA PALETTE -->
+    <div class="rise" style="animation-delay:180ms; display:flex; flex-direction:column; gap:18px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <h2 class="serif" style="margin:0; font-size:24px;">Data colour</h2>
+        <span style="font-size:13px; color:var(--ink3);">checked, not eyeballed</span>
+      </div>
+      <div class="card" style="padding:24px; display:flex; flex-direction:column; gap:22px;">
+        <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px;">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <span class="eyebrow" style="color:var(--ok);">Categorical — 3 slots</span>
+            <div style="display:flex; gap:8px;">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--s1);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">s1</span></div>
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--s2);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">s2</span></div>
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--s3);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">s3</span></div>
+            </div>
+            <p style="margin:0; font-size:12px; line-height:1.6; color:var(--ink2);">Passes <strong>all-pairs</strong> in both modes — worst deutan ΔE 9.2 light, 9.4 dark. Identity only: the three cards in a routing comparison.</p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <span class="eyebrow" style="color:var(--warn);">Extension — adjacent only</span>
+            <div style="display:flex; gap:8px;">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--s4);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">s4</span></div>
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--s5);"></div><span class="mono" style="font-size:10px; color:var(--ink3);">s5</span></div>
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:var(--mute); opacity:.5;"></div><span class="mono" style="font-size:10px; color:var(--ink3);">other</span></div>
+            </div>
+            <p style="margin:0; font-size:12px; line-height:1.6; color:var(--ink2);">Legal in touching forms — stacks, grouped bars, lines — <em>with</em> mandatory direct labels. Never in scatter or small multiples. A 6th series folds into grey.</p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <span class="eyebrow">Sequential &amp; emphasis</span>
+            <div style="display:flex; gap:8px;">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:linear-gradient(90deg,var(--accentSoft),var(--accent));"></div><span class="mono" style="font-size:10px; color:var(--ink3);">one hue</span></div>
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:6px;"><div class="sw" style="background:linear-gradient(90deg,var(--accent) 34%,var(--mute) 34%); opacity:.9;"></div><span class="mono" style="font-size:10px; color:var(--ink3);">accent + grey</span></div>
+            </div>
+            <p style="margin:0; font-size:12px; line-height:1.6; color:var(--ink2);">The default. Category rankings, trends and utilisation are magnitude, not identity — one hue for every mark, or one accent against grey when a single figure is the story.</p>
+          </div>
+        </div>
+        <div class="rowline" style="padding-top:18px; display:flex; flex-direction:column; gap:8px;">
+          <span class="eyebrow">Why six slots became three</span>
+          <p style="margin:0; max-width:96ch; font-size:13px; line-height:1.65; color:var(--ink2);">The shipped palette declares six hues but carries five: <span class="mono" style="font-size:12px;">--s3</span> #1baf7a and <span class="mono" style="font-size:12px;">--s6</span> #008300 are both greens, ΔE 1.6 apart under deuteranopia. <span class="mono" style="font-size:12px;">--s6</span> also has no dark step — the same #008300 is declared in both modes. Every replacement sixth hue tested collides with an existing slot, and pink against orange fails the normal-vision floor on its own. Six mutually distinguishable hues do not exist inside this lightness band, so the palette stops claiming them.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCALE + COMPONENTS -->
+    <div class="rise" style="animation-delay:240ms; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px;">
+      <div class="card" style="padding:24px; display:flex; flex-direction:column; gap:18px;">
+        <h2 class="serif" style="margin:0; font-size:20px;">Scale</h2>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <span class="eyebrow">Spacing — 4px base</span>
+          <div style="display:flex; align-items:flex-end; gap:8px;">
+            <div style="width:4px;  height:4px;  background:var(--accent); border-radius:2px;"></div>
+            <div style="width:8px;  height:8px;  background:var(--accent); border-radius:2px;"></div>
+            <div style="width:12px; height:12px; background:var(--accent); border-radius:2px;"></div>
+            <div style="width:16px; height:16px; background:var(--accent); border-radius:3px;"></div>
+            <div style="width:24px; height:24px; background:var(--accent); border-radius:4px;"></div>
+            <div style="width:32px; height:32px; background:var(--accent); border-radius:5px;"></div>
+            <div style="width:48px; height:48px; background:var(--accent); border-radius:6px;"></div>
+            <div style="width:64px; height:64px; background:var(--accent); border-radius:8px;"></div>
+          </div>
+          <span class="mono" style="font-size:11px; color:var(--ink3);">4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96</span>
+        </div>
+        <div class="rowline" style="padding-top:16px; display:flex; flex-direction:column; gap:10px;">
+          <span class="eyebrow">Radius</span>
+          <div style="display:flex; gap:12px;">
+            <div style="width:64px; height:44px; border:1px solid var(--line); background:var(--surface2); border-radius:6px; display:grid; place-items:center;"><span class="mono" style="font-size:10px; color:var(--ink3);">6</span></div>
+            <div style="width:64px; height:44px; border:1px solid var(--line); background:var(--surface2); border-radius:10px; display:grid; place-items:center;"><span class="mono" style="font-size:10px; color:var(--ink3);">10</span></div>
+            <div style="width:64px; height:44px; border:1px solid var(--line); background:var(--surface2); border-radius:14px; display:grid; place-items:center;"><span class="mono" style="font-size:10px; color:var(--ink3);">14</span></div>
+            <div style="width:64px; height:44px; border:1px solid var(--line); background:var(--surface2); border-radius:20px; display:grid; place-items:center;"><span class="mono" style="font-size:10px; color:var(--ink3);">20</span></div>
+          </div>
+          <span style="font-size:12px; color:var(--ink3);">control · chip · card · sheet. One value per role — the app currently mixes 12 and 14 for the same card.</span>
+        </div>
+        <div class="rowline" style="padding-top:16px; display:flex; flex-direction:column; gap:10px;">
+          <span class="eyebrow">Elevation — two levels, no more</span>
+          <div style="display:flex; gap:16px;">
+            <div style="flex-grow:1; height:56px; background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); display:grid; place-items:center;"><span style="font-size:12px; color:var(--ink3);">card</span></div>
+            <div style="flex-grow:1; height:56px; background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadowLg); display:grid; place-items:center;"><span style="font-size:12px; color:var(--ink3);">drawer only</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px; display:flex; flex-direction:column; gap:18px;">
+        <h2 class="serif" style="margin:0; font-size:20px;">Controls</h2>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <span class="eyebrow">Buttons — 36px</span>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+            <span style="height:36px; padding:0 16px; display:inline-flex; align-items:center; background:var(--accent); color:#fff; border-radius:6px; font-size:13px; font-weight:600;">Read statements</span>
+            <span style="height:36px; padding:0 16px; display:inline-flex; align-items:center; background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:6px; font-size:13px; font-weight:600;">Add a card</span>
+            <span style="height:36px; padding:0 12px; display:inline-flex; align-items:center; color:var(--ink2); border-radius:6px; font-size:13px; font-weight:600;">Skip</span>
+            <span style="height:36px; padding:0 16px; display:inline-flex; align-items:center; background:var(--accent); color:#fff; border-radius:6px; font-size:13px; font-weight:600; outline:2px solid var(--accent); outline-offset:2px;">Focused</span>
+            <span style="height:36px; padding:0 16px; display:inline-flex; align-items:center; background:var(--surface2); color:var(--mute); border:1px solid var(--line); border-radius:6px; font-size:13px; font-weight:600;">Disabled</span>
+          </div>
+        </div>
+        <div class="rowline" style="padding-top:16px; display:flex; flex-direction:column; gap:10px;">
+          <span class="eyebrow">Scope — one control, every screen</span>
+          <div style="display:inline-flex; align-self:flex-start; background:var(--surface2); border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px;">
+            <span style="padding:5px 14px; border-radius:6px; font-size:13px; font-weight:600; background:var(--surface); color:var(--ink); box-shadow:var(--shadow);">Month</span>
+            <span style="padding:5px 14px; border-radius:6px; font-size:13px; font-weight:500; color:var(--ink2);">Year</span>
+            <span style="padding:5px 14px; border-radius:6px; font-size:13px; font-weight:500; color:var(--ink2);">All time</span>
+          </div>
+          <span style="font-size:12px; color:var(--ink3);">Selection carries weight and surface, never hue alone.</span>
+        </div>
+        <div class="rowline" style="padding-top:16px; display:flex; flex-direction:column; gap:12px;">
+          <span class="eyebrow">Meter — ratio against a limit</span>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;"><span style="font-size:13px; color:var(--ink2);">Utilisation</span><span class="tnum" style="font-size:13px; font-weight:600;">61%</span></div>
+            <div style="height:8px; border-radius:4px; background:var(--warnSoft); overflow:hidden;"><div style="height:100%; width:61%; border-radius:4px; background:var(--warn);"></div></div>
+            <span style="font-size:12px; color:var(--ink3);">Track is a lighter step of the fill's own ramp, so severity reads across the whole bar.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM HEURISTIC -->
+    <div class="rise" style="animation-delay:300ms; display:flex; flex-direction:column; gap:18px;">
+      <h2 class="serif" style="margin:0; font-size:24px;">Which form, and why</h2>
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:1.1fr 1fr 1.6fr;">
+          <div style="padding:14px 20px; background:var(--surface2); border-bottom:1px solid var(--line);"><span class="eyebrow">The reader's job</span></div>
+          <div style="padding:14px 20px; background:var(--surface2); border-bottom:1px solid var(--line);"><span class="eyebrow">Form</span></div>
+          <div style="padding:14px 20px; background:var(--surface2); border-bottom:1px solid var(--line);"><span class="eyebrow">Colour job · where it lands</span></div>
+
+          <div style="padding:16px 20px; font-size:14px;">One headline number</div>
+          <div style="padding:16px 20px; font-size:14px; color:var(--ink2);">Hero figure</div>
+          <div style="padding:16px 20px; font-size:13px; color:var(--ink2);">Ink only — Today</div>
+
+          <div class="rowline" style="padding:16px 20px; font-size:14px;">Trend over time</div>
+          <div class="rowline" style="padding:16px 20px; font-size:14px; color:var(--ink2);">Area, single series</div>
+          <div class="rowline" style="padding:16px 20px; font-size:13px; color:var(--ink2);">One hue, 10% wash — Today, Spending</div>
+
+          <div class="rowline" style="padding:16px 20px; font-size:14px;">Rank nominal categories</div>
+          <div class="rowline" style="padding:16px 20px; font-size:14px; color:var(--ink2);">Horizontal bars</div>
+          <div class="rowline" style="padding:16px 20px; font-size:13px; color:var(--ink2);"><strong style="color:var(--ink);">One hue for every bar</strong> — never a hue per category</div>
+
+          <div class="rowline" style="padding:16px 20px; font-size:14px;">Tell cards apart</div>
+          <div class="rowline" style="padding:16px 20px; font-size:14px; color:var(--ink2);">Grouped bars + table</div>
+          <div class="rowline" style="padding:16px 20px; font-size:13px; color:var(--ink2);">Categorical, 3 slots, direct-labelled — Plan</div>
+
+          <div class="rowline" style="padding:16px 20px; font-size:14px;">One figure is the story</div>
+          <div class="rowline" style="padding:16px 20px; font-size:14px; color:var(--ink2);">Emphasis</div>
+          <div class="rowline" style="padding:16px 20px; font-size:13px; color:var(--ink2);">Accent against grey — Review inbox</div>
+
+          <div class="rowline" style="padding:16px 20px; font-size:14px;">Ratio against a limit</div>
+          <div class="rowline" style="padding:16px 20px; font-size:14px; color:var(--ink2);">Meter</div>
+          <div class="rowline" style="padding:16px 20px; font-size:13px; color:var(--ink2);">Status ramp — Cards</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"dark":{"editor":"boolean","default":false}}'>
+class Component extends DCLogic {
+  renderVals() { return { mode: this.props.dark ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>

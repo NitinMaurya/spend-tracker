@@ -1,0 +1,35 @@
+# Financial data — never commit
+sample_statements/
+data/
+*.db
+*.db-wal
+*.db-shm
+*.pdf
+
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+test-review.html
+
+ui/node_modules/
+ui/.next/
+
+# Runtime logs — carry statement filenames
+logs/
+
+# Generated: re-seed from design/*.dc.html with the design helper.
+# 2.3 MB that rewrites wholesale on every build, so it does not belong in history.
+design/ledger-ui-overhaul.html
+
+# Scratch
+*.bak
+
+# Personal documents — real figures and a real wallet, not for publication
+DECISIONS.md
+Credit Card Analyzer Specification.md
+sample_kfs/
+
+# Golden evals assert against statements that live only on this machine, so a
+# clone can never run them — and their fixtures quote real card numbers.
+tests/parsers/test_*_golden.py

@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4338ca; text-decoration: none; } a:hover { color: #4f46e5; }
+    .t { --bg:#fbfbfd; --surface:#ffffff; --surface2:#f7f8fb; --line:#e6e8f0; --hair:#eef0f6;
+      --ink:#14161f; --ink2:#565b70; --ink3:#6b7085; --mute:#9aa0b4;
+      --accent:#4f46e5; --accentInk:#4338ca; --accentSoft:#eeecfe;
+      --ok:#10795a; --okSoft:#e3f2ec; --warn:#96650f; --warnSoft:#fbf0dc; --bad:#b03328; --badSoft:#fbe9e7;
+      --shadowLg:0 2px 4px rgba(20,22,31,.04),0 16px 40px rgba(20,22,31,.10); }
+    .t.dark { --bg:#0d0e14; --surface:#171922; --surface2:#1d202b; --line:#272b38; --hair:#1f222d;
+      --ink:#eceef5; --ink2:#a2a8bd; --ink3:#8d93a8; --mute:#6e7489;
+      --accent:#8b83f7; --accentInk:#b4adfb; --accentSoft:#211f3d;
+      --ok:#6cc39c; --okSoft:#12291f; --warn:#d9a95f; --warnSoft:#2b2214; --bad:#e78477; --badSoft:#2e1a17;
+      --shadowLg:0 2px 6px rgba(0,0,0,.35),0 20px 48px rgba(0,0,0,.45); }
+    .t { font-family:'Instrument Sans',ui-sans-serif,system-ui,sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+    .serif { font-family:'Instrument Serif',Georgia,'Times New Roman',serif; font-weight:400; }
+    .mono { font-family:'Geist Mono',ui-monospace,Menlo,monospace; }
+    .tnum { font-variant-numeric:tabular-nums; }
+    .eyebrow { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+    @keyframes slideIn { from{opacity:0;transform:translateX(28px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .drawer { animation:slideIn .42s cubic-bezier(.22,.8,.3,1) both; }
+    .step { animation:fadeIn .5s ease-out both; }
+    @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+  </style>
+</helmet>
+<div class="t {{mode}}" style="width:660px; background:var(--bg); display:flex;">
+  <!-- a sliver of the page it slid over -->
+  <div style="width:40px; background:var(--bg); border-right:1px solid var(--line); opacity:.5;"></div>
+
+  <div class="drawer" style="width:620px; min-height:940px; background:var(--surface); box-shadow:var(--shadowLg); display:flex; flex-direction:column;">
+
+    <div style="padding:18px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      <span style="font-size:14px; font-weight:600;">Where this figure comes from</span>
+      <span style="margin-left:auto; display:inline-flex; align-items:center; gap:6px;">
+        <span class="mono" style="font-size:11px; color:var(--ink3);">esc</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </span>
+    </div>
+
+    <div style="padding:24px; display:flex; flex-direction:column; gap:24px;">
+
+      <!-- the figure under inspection -->
+      <div style="display:flex; flex-direction:column; gap:7px;">
+        <span class="eyebrow">The figure</span>
+        <div style="display:flex; align-items:baseline; gap:12px;">
+          <span class="tnum" style="font-size:34px; font-weight:600; letter-spacing:-.025em; line-height:1;">5.0%</span>
+          <span style="font-size:15px; color:var(--ink2);">on groceries · noon VIP Credit Card</span>
+        </div>
+        <span style="font-size:13px; color:var(--ink3);">used to price <span class="tnum" style="color:var(--ink2); font-weight:500;">42,300</span> of spending into <span class="tnum" style="color:var(--ink2); font-weight:500;">2,115.00</span> of reward</span>
+      </div>
+
+      <!-- the chain -->
+      <div style="display:flex; flex-direction:column; gap:0;">
+        <span class="eyebrow" style="margin-bottom:12px;">The chain</span>
+
+        <div class="step" style="animation-delay:.1s; display:flex; gap:14px;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0;">
+            <span style="width:24px; height:24px; border-radius:50%; background:var(--accentSoft); color:var(--accentInk); display:grid; place-items:center; font-size:11px; font-weight:600;">1</span>
+            <span style="width:2px; flex-grow:1; background:var(--hair); min-height:44px;"></span>
+          </div>
+          <div style="padding-bottom:18px; display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:13.5px; font-weight:600;">A reward tier in the plan</span>
+            <span class="mono" style="font-size:11.5px; color:var(--ink2);">tier[1] · rate_bps 500 · categories GROCERIES · cap none</span>
+          </div>
+        </div>
+
+        <div class="step" style="animation-delay:.2s; display:flex; gap:14px;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <span style="width:24px; height:24px; border-radius:50%; background:var(--accentSoft); color:var(--accentInk); display:grid; place-items:center; font-size:11px; font-weight:600;">2</span>
+            <span style="width:2px; flex-grow:1; background:var(--hair); min-height:44px;"></span>
+          </div>
+          <div style="padding-bottom:18px; display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:13.5px; font-weight:600;">Read verbatim from a Key Facts Statement</span>
+            <span class="mono" style="font-size:11.5px; color:var(--ink2);">Mahreq_noon_Credit_Card_Terms_and_Conditions_en.pdf · p.4</span>
+          </div>
+        </div>
+
+        <div class="step" style="animation-delay:.3s; display:flex; gap:14px;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <span style="width:24px; height:24px; border-radius:50%; background:var(--okSoft); color:var(--ok); display:grid; place-items:center;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:13.5px; font-weight:600;">Nothing was inferred</span>
+            <span style="font-size:12.5px; color:var(--ink2);">No rate on this screen was estimated, rounded up, or carried over from a similar card.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- the verbatim quote -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <span class="eyebrow">What the document actually says</span>
+        <div style="padding:18px; border-radius:10px; background:var(--surface2); border:1px solid var(--line); border-left:3px solid var(--accent);">
+          <p class="mono" style="margin:0; font-size:12.5px; line-height:1.75; color:var(--ink);">&ldquo;Earn 5% noon credit on all noon.com and noon Minutes purchases, and on supermarket spend within the UAE. Capped at AED 1,000 of noon credit per statement cycle.&rdquo;</p>
+          <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--line); display:flex; align-items:center; gap:10px;">
+            <span class="mono" style="font-size:11px; color:var(--ink3);">page 4 · line 22 · characters 1180&ndash;1361</span>
+            <span style="margin-left:auto; font-size:12px; font-weight:600; color:var(--accentInk);">Open the PDF here →</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- the conflict, shown not hidden -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <span class="eyebrow" style="color:var(--warn);">One conflict, resolved conservatively</span>
+        <div style="padding:16px; border-radius:10px; background:var(--warnSoft);">
+          <div style="display:flex; gap:11px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <span style="font-size:13px; line-height:1.6; color:var(--ink);">The same document quotes <strong>4%</strong> on page 9 under a promotional schedule that has no end date printed.</span>
+              <p class="mono" style="margin:0; font-size:11.5px; line-height:1.7; color:var(--ink2);">&ldquo;…a rate of 4% shall apply to supermarket categories…&rdquo;</p>
+              <span style="font-size:12.5px; font-weight:600; color:var(--ink);">The plan used 4%, not 5% — the lower of two quoted rates always wins.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- the excluded-from part -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <span class="eyebrow">What this rate never applies to</span>
+        <div style="display:flex; flex-wrap:wrap; gap:7px;">
+          <span style="padding:5px 11px; border-radius:10px; background:var(--surface2); border:1px solid var(--line); font-size:12px; color:var(--ink2);">Utility bills</span>
+          <span style="padding:5px 11px; border-radius:10px; background:var(--surface2); border:1px solid var(--line); font-size:12px; color:var(--ink2);">Government payments</span>
+          <span style="padding:5px 11px; border-radius:10px; background:var(--surface2); border:1px solid var(--line); font-size:12px; color:var(--ink2);">Cash advances</span>
+          <span style="padding:5px 11px; border-radius:10px; background:var(--surface2); border:1px solid var(--line); font-size:12px; color:var(--ink2);">Fuel</span>
+          <span style="padding:5px 11px; border-radius:10px; background:var(--surface2); border:1px solid var(--line); font-size:12px; color:var(--ink2);">Real estate</span>
+          <span style="padding:5px 11px; border-radius:10px; background:var(--warnSoft); color:var(--warn); font-size:12px; font-weight:600;">2 more we could not classify</span>
+        </div>
+      </div>
+
+      <!-- provenance footer -->
+      <div style="padding-top:20px; border-top:1px solid var(--line); display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;">
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <span class="eyebrow">Parser</span>
+          <span class="mono" style="font-size:12px;">mashreq_kfs v4</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <span class="eyebrow">Read on</span>
+          <span class="mono" style="font-size:12px;">23 Aug 2026, 18:42</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <span class="eyebrow">Reconciled</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ok);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            against printed totals</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <span class="eyebrow">Left this machine</span>
+          <span style="font-size:12px; font-weight:600; color:var(--ok);">never</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"dark":{"editor":"boolean","default":false}}'>
+class Component extends DCLogic {
+  renderVals() { return { mode: this.props.dark ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>

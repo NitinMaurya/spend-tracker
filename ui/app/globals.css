@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Ledger — visual system
+
+   Three roles, three faces: a serif carries the voice (titles), a sans
+   carries the data (everything numeric), a mono carries the evidence
+   (quotes, ids, parser versions).
+
+   Colour rules that are not negotiable:
+   · `ink3` is the lightest colour allowed to carry TEXT (4.9:1 on card).
+     `mute` is lighter and is for hairlines and icons ONLY.
+   · Categorical series are THREE slots (s1/s2/s3 — blue/orange/green).
+     That set passes the all-pairs CVD and normal-vision checks in both
+     modes. s4/s5 are an adjacent-only extension: legal in touching forms
+     (stacks, grouped bars, lines) WITH direct labels, never in scatter or
+     small multiples. A sixth hue does not exist inside this lightness
+     band — the tail folds into `mute`.
+   · ok/warn/bad mean STATE and are never reused as a series colour; they
+     always ship with a glyph and a word beside them.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg:       #fbfbfd;
+  --surface:  #ffffff;
+  --surface-2:#f7f8fb;
+  --line:     #e6e8f0;
+  --hair:     #eef0f6;
+
+  --ink:   #14161f;   /* 14.9:1 */
+  --ink-2: #565b70;   /*  6.6:1 */
+  --ink-3: #6b7085;   /*  4.9:1 — the floor for text */
+  --mute:  #9aa0b4;   /*  2.9:1 — hairlines and icons only */
+
+  --accent:      #4f46e5;
+  --accent-ink:  #4338ca;
+  --accent-soft: #eeecfe;
+
+  --ok:   #10795a;  --ok-soft:   #e3f2ec;
+  --warn: #96650f;  --warn-soft: #fbf0dc;
+  --bad:  #b03328;  --bad-soft:  #fbe9e7;
+
+  /* categorical — 3 slots, all-pairs safe */
+  --s1: #2a78d6;  --s2: #eb6834;  --s3: #1baf7a;
+  /* adjacent-only extension */
+  --s4: #eda100;  --s5: #e87ba4;
+
+  --radius-control: 6px;
+  --radius-chip:   10px;
+  --radius-card:   14px;
+  --radius-sheet:  20px;
+
+  --shadow-sm: 0 1px 2px rgb(20 22 31 / .04), 0 1px 3px rgb(20 22 31 / .06);
+  --shadow-lg: 0 2px 4px rgb(20 22 31 / .04), 0 16px 40px rgb(20 22 31 / .10);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:       #0d0e14;
+    --surface:  #171922;
+    --surface-2:#1d202b;
+    --line:     #272b38;
+    --hair:     #1f222d;
+
+    --ink:   #eceef5;
+    --ink-2: #a2a8bd;
+    --ink-3: #8d93a8;
+    --mute:  #6e7489;
+
+    --accent:      #8b83f7;
+    --accent-ink:  #b4adfb;
+    --accent-soft: #211f3d;
+
+    --ok:   #6cc39c;  --ok-soft:   #12291f;
+    --warn: #d9a95f;  --warn-soft: #2b2214;
+    --bad:  #e78477;  --bad-soft:  #2e1a17;
+
+    --s1: #3987e5;  --s2: #d95926;  --s3: #199e70;
+    --s4: #c98500;  --s5: #d55181;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / .4);
+    --shadow-lg: 0 2px 6px rgb(0 0 0 / .35), 0 20px 48px rgb(0 0 0 / .45);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0e14; --surface: #171922; --surface-2: #1d202b; --line: #272b38; --hair: #1f222d;
+  --ink: #eceef5; --ink-2: #a2a8bd; --ink-3: #8d93a8; --mute: #6e7489;
+  --accent: #8b83f7; --accent-ink: #b4adfb; --accent-soft: #211f3d;
+  --ok: #6cc39c; --ok-soft: #12291f;
+  --warn: #d9a95f; --warn-soft: #2b2214;
+  --bad: #e78477; --bad-soft: #2e1a17;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / .4);
+  --shadow-lg: 0 2px 6px rgb(0 0 0 / .35), 0 20px 48px rgb(0 0 0 / .45);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface-2);
+  --color-line: var(--line);
+  --color-hair: var(--hair);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink-2);
+  --color-ink3: var(--ink-3);
+  --color-mute: var(--mute);
+  --color-accent: var(--accent);
+  --color-accentInk: var(--accent-ink);
+  --color-accentSoft: var(--accent-soft);
+  --color-ok: var(--ok);        --color-okSoft: var(--ok-soft);
+  --color-warn: var(--warn);    --color-warnSoft: var(--warn-soft);
+  --color-bad: var(--bad);      --color-badSoft: var(--bad-soft);
+  --color-s1: var(--s1); --color-s2: var(--s2); --color-s3: var(--s3);
+  --color-s4: var(--s4); --color-s5: var(--s5);
+  --radius-control: var(--radius-control);
+  --radius-chip: var(--radius-chip);
+  --radius-card: var(--radius-card);
+  --radius-sheet: var(--radius-sheet);
+  --shadow-card: var(--shadow-sm);
+  --shadow-sheet: var(--shadow-lg);
+}
+
+* { box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--ink); }
+body {
+  font-family: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── type roles ─────────────────────────────────────────────────────────── */
+
+/* The serif carries the voice: page and section titles only. */
+.serif { font-family: var(--font-serif), Georgia, "Times New Roman", serif; font-weight: 400; }
+
+/* Evidence: statement quotes, transaction ids, parser versions. */
+.mono { font-family: var(--font-mono), ui-monospace, Menlo, monospace; }
+
+/* tabular figures ONLY where numbers align vertically (table rows, axis ticks). */
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+/* The one big number on a screen. Sans, and PROPORTIONAL figures — tabular
+   digits give every glyph the width of a 0, which reads loose at this size. */
+.hero-figure {
+  font-variant-numeric: proportional-nums;
+  font-weight: 600;
+  /* Scales with its column. A fixed 3.5rem wrapped "AED 15,547.37" onto two
+     lines, which reads as a layout accident rather than a headline. */
+  font-size: clamp(2.1rem, 3.3vw, 3.25rem);
+  line-height: 1.02;
+  letter-spacing: -.03em;
+  text-wrap: nowrap;
+}
+
+.eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+
+/* ── motion: one orchestrated reveal, never per-element decoration ─────── */
+@keyframes rise-in  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes grow-x   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes draw     { to { stroke-dashoffset: 0; } }
+@keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in   { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes slide-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+
+.rise    { animation: rise-in .55s cubic-bezier(.22,.8,.3,1) both; }
+.bar     { transform-origin: left center; animation: grow-x .78s cubic-bezier(.22,.8,.3,1) both; }
+.drawn   { animation: draw 1.15s cubic-bezier(.4,.1,.2,1) .35s both; }
+.washed  { animation: fade-in .8s ease-out .75s both; }
+.dot     { transform-box: fill-box; transform-origin: center; animation: pop-in .4s cubic-bezier(.34,1.56,.64,1) 1.35s both; }
+.slide-in{ animation: slide-in .42s cubic-bezier(.22,.8,.3,1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .bar, .drawn, .washed, .dot, .slide-in { animation: none; }
+  .drawn { stroke-dasharray: none !important; }
+  * { transition-duration: .01ms !important; }
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Wide content scrolls inside its own box; the page never scrolls sideways. */
+.scroll-x { overflow-x: auto; }

@@ -1,0 +1,308 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4338ca; text-decoration: none; } a:hover { color: #4f46e5; }
+    .t { --bg:#fbfbfd; --surface:#ffffff; --surface2:#f7f8fb; --line:#e6e8f0; --hair:#eef0f6;
+      --ink:#14161f; --ink2:#565b70; --ink3:#6b7085; --mute:#9aa0b4;
+      --accent:#4f46e5; --accentInk:#4338ca; --accentSoft:#eeecfe;
+      --ok:#10795a; --okSoft:#e3f2ec; --warn:#96650f; --warnSoft:#fbf0dc; --bad:#b03328; --badSoft:#fbe9e7;
+      --shadow:0 1px 2px rgba(20,22,31,.04),0 1px 3px rgba(20,22,31,.06); }
+    .t.dark { --bg:#0d0e14; --surface:#171922; --surface2:#1d202b; --line:#272b38; --hair:#1f222d;
+      --ink:#eceef5; --ink2:#a2a8bd; --ink3:#8d93a8; --mute:#6e7489;
+      --accent:#8b83f7; --accentInk:#b4adfb; --accentSoft:#211f3d;
+      --ok:#6cc39c; --okSoft:#12291f; --warn:#d9a95f; --warnSoft:#2b2214; --bad:#e78477; --badSoft:#2e1a17;
+      --shadow:0 1px 2px rgba(0,0,0,.4); }
+    .t { font-family:'Instrument Sans',ui-sans-serif,system-ui,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; }
+    .serif { font-family:'Instrument Serif',Georgia,'Times New Roman',serif; font-weight:400; }
+    .mono { font-family:'Geist Mono',ui-monospace,Menlo,monospace; }
+    .tnum { font-variant-numeric:tabular-nums; }
+    .eyebrow { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); }
+    .navitem { padding:7px 12px; border-radius:6px; font-size:13.5px; font-weight:500; color:var(--ink2); }
+    .navitem.on { background:var(--accentSoft); color:var(--accentInk); font-weight:600; }
+    @keyframes riseIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    @keyframes growX { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+    .rise { animation:riseIn .55s cubic-bezier(.22,.8,.3,1) both; }
+    .bar { transform-origin:left center; animation:growX .8s cubic-bezier(.22,.8,.3,1) both; }
+    @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+  </style>
+</helmet>
+<div class="t {{mode}}" style="width:1440px; padding-bottom:60px;">
+
+  <div style="border-bottom:1px solid var(--line); background:var(--bg);">
+    <div style="max-width:1120px; margin:0 auto; height:60px; display:flex; align-items:center; gap:28px;">
+      <div style="display:flex; align-items:center; gap:9px;">
+        <span style="width:26px; height:26px; border-radius:7px; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:13px; font-weight:600;">L</span>
+        <span class="serif" style="font-size:19px;">Ledger</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:2px;">
+        <span class="navitem">Today</span><span class="navitem">Spending</span><span class="navitem on">Cards</span><span class="navitem">Plan</span>
+      </div>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:16px;">
+        <span style="display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:500; color:var(--ink2);">Data
+          <span class="tnum" style="min-width:20px; height:18px; padding:0 6px; border-radius:9px; background:var(--warnSoft); color:var(--warn); font-size:11px; font-weight:600; display:inline-grid; place-items:center;">24</span></span>
+        <span style="width:1px; height:18px; background:var(--line);"></span>
+        <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink3);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          on this machine only</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1120px; margin:0 auto; padding-top:30px; display:flex; flex-direction:column; gap:26px;">
+
+    <div class="rise" style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <h1 class="serif" style="margin:0; font-size:32px; letter-spacing:-.01em;">Your wallet</h1>
+        <p style="margin:0; max-width:70ch; font-size:14px; line-height:1.6; color:var(--ink2);">Balances and limits are always current — they are not scoped by the period control, because a balance has no period.</p>
+      </div>
+      <span style="height:36px; padding:0 16px; display:inline-flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:6px; font-size:13px; font-weight:600;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add terms for a card</span>
+    </div>
+
+    <!-- terms coverage: the readiness blocker, stated where it can be fixed -->
+    <div class="rise card" style="animation-delay:60ms; padding:18px 20px; display:flex; align-items:center; gap:20px;">
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <span style="font-size:14px; font-weight:600;">Terms on file for 3 of 6 cards</span>
+        <span style="font-size:12.5px; color:var(--ink3);">A card with no Key Facts Statement is left out of the plan rather than guessed at.</span>
+      </div>
+      <div style="flex-grow:1; display:flex; gap:4px; height:9px; max-width:340px;">
+        <span style="flex-grow:1; background:var(--ok); border-radius:4px;"></span>
+        <span style="flex-grow:1; background:var(--ok); border-radius:4px;"></span>
+        <span style="flex-grow:1; background:var(--ok); border-radius:4px;"></span>
+        <span style="flex-grow:1; background:var(--hair); border-radius:4px;"></span>
+        <span style="flex-grow:1; background:var(--hair); border-radius:4px;"></span>
+        <span style="flex-grow:1; background:var(--hair); border-radius:4px;"></span>
+      </div>
+      <span style="margin-left:auto; font-size:13px; font-weight:600; color:var(--accentInk);">Which three are missing? →</span>
+    </div>
+
+    <div class="rise" style="animation-delay:120ms; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <h2 class="serif" style="margin:0; font-size:20px;">Credit cards</h2>
+        <span style="font-size:13px; color:var(--ink3);">six on record</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px;">
+
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:15px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">noon VIP Credit Card</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">Mashreq ···· 4471</span>
+            </div>
+            <span style="background:var(--warnSoft); color:var(--warn); border-radius:10px; padding:4px 9px; font-size:11.5px; font-weight:600;">8 days</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <span class="eyebrow">Due</span>
+            <span class="tnum" style="font-size:24px; font-weight:600; letter-spacing:-.02em; line-height:1;">11,980.00</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">61% in use</span>
+              <span class="tnum" style="font-size:11.5px; color:var(--ink3);">of 20,000</span>
+            </div>
+            <div style="height:7px; border-radius:4px; background:var(--warnSoft); overflow:hidden;"><div class="bar" style="animation-delay:.34s; height:100%; width:61%; border-radius:4px; background:var(--warn);"></div></div>
+          </div>
+          <div style="padding-top:12px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:7px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span style="font-size:12px; color:var(--ink2);">terms on file · 4 reward tiers</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:15px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">VISA FLEXI</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">Emirates NBD ···· 0114</span>
+            </div>
+            <span style="background:var(--surface2); color:var(--ink2); border:1px solid var(--line); border-radius:10px; padding:3px 9px; font-size:11.5px; font-weight:600;">17 days</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <span class="eyebrow">Due</span>
+            <span class="tnum" style="font-size:24px; font-weight:600; letter-spacing:-.02em; line-height:1;">6,412.50</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">34% in use</span>
+              <span class="tnum" style="font-size:11.5px; color:var(--ink3);">of 19,000</span>
+            </div>
+            <div style="height:7px; border-radius:4px; background:var(--okSoft); overflow:hidden;"><div class="bar" style="animation-delay:.40s; height:100%; width:34%; border-radius:4px; background:var(--ok);"></div></div>
+          </div>
+          <div style="padding-top:12px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:7px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span style="font-size:12px; color:var(--ink2);">terms on file · 3 reward tiers</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:15px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">CBD ONE</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">CBD ···· 2208</span>
+            </div>
+            <span style="background:var(--okSoft); color:var(--ok); border-radius:10px; padding:4px 9px; font-size:11.5px; font-weight:600;">settled</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <span class="eyebrow">Due</span>
+            <span class="tnum" style="font-size:24px; font-weight:600; letter-spacing:-.02em; line-height:1; color:var(--ink2);">0.00</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">0% in use</span>
+              <span class="tnum" style="font-size:11.5px; color:var(--ink3);">of 15,000</span>
+            </div>
+            <div style="height:7px; border-radius:4px; background:var(--hair); overflow:hidden;"></div>
+          </div>
+          <div style="padding-top:12px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:7px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span style="font-size:12px; color:var(--ink2);">terms on file · 2 reward tiers</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:15px; border-style:dashed;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">BLUE FAB SIGNATURE</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">FAB ···· 6613</span>
+            </div>
+            <span style="background:var(--surface2); color:var(--ink2); border:1px solid var(--line); border-radius:10px; padding:3px 9px; font-size:11.5px; font-weight:600;">22 days</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <span class="eyebrow">Due</span>
+            <span class="tnum" style="font-size:24px; font-weight:600; letter-spacing:-.02em; line-height:1;">2,845.00</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">19% in use</span>
+              <span class="tnum" style="font-size:11.5px; color:var(--ink3);">of 15,000</span>
+            </div>
+            <div style="height:7px; border-radius:4px; background:var(--okSoft); overflow:hidden;"><div class="bar" style="animation-delay:.46s; height:100%; width:19%; border-radius:4px; background:var(--ok);"></div></div>
+          </div>
+          <div style="padding-top:12px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:7px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+            <span style="font-size:12px; color:var(--warn); font-weight:600;">no terms — left out of the plan</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:15px; border-style:dashed;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">Emirates Islamic Platinum</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">Emirates Islamic ···· 9014</span>
+            </div>
+            <span style="background:var(--okSoft); color:var(--ok); border-radius:10px; padding:4px 9px; font-size:11.5px; font-weight:600;">settled</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <span class="eyebrow">Due</span>
+            <span class="tnum" style="font-size:24px; font-weight:600; letter-spacing:-.02em; line-height:1; color:var(--ink2);">0.00</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">limit not printed</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">—</span>
+            </div>
+            <div style="height:7px; border-radius:4px; background:var(--hair);"></div>
+          </div>
+          <div style="padding-top:12px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:7px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+            <span style="font-size:12px; color:var(--warn); font-weight:600;">no terms — left out of the plan</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:15px; border-style:dashed;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">Dubai First Credit</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">Dubai First ···· 5527</span>
+            </div>
+            <span style="background:var(--badSoft); color:var(--bad); border-radius:10px; padding:4px 9px; font-size:11.5px; font-weight:600;">3 overdue</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <span class="eyebrow">Due</span>
+            <span class="tnum" style="font-size:24px; font-weight:600; letter-spacing:-.02em; line-height:1; color:var(--bad);">1,204.00</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">88% in use</span>
+              <span class="tnum" style="font-size:11.5px; color:var(--ink3);">of 8,000</span>
+            </div>
+            <div style="height:7px; border-radius:4px; background:var(--badSoft); overflow:hidden;"><div class="bar" style="animation-delay:.52s; height:100%; width:88%; border-radius:4px; background:var(--bad);"></div></div>
+          </div>
+          <div style="padding-top:12px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:7px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+            <span style="font-size:12px; color:var(--warn); font-weight:600;">no terms — left out of the plan</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="rise" style="animation-delay:180ms; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <div class="card" style="padding:22px 24px; display:flex; flex-direction:column; gap:14px;">
+        <h2 class="serif" style="margin:0; font-size:20px;">Settlement accounts</h2>
+        <div style="display:flex; flex-direction:column;">
+          <div style="padding:12px 0; display:flex; align-items:center; gap:14px; border-bottom:1px solid var(--hair);">
+            <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Current account</span><span class="mono" style="font-size:11px; color:var(--ink3);">Emirates NBD ···· 3182</span></div>
+            <span class="tnum" style="font-size:14px; font-weight:600;">42,118.60</span>
+          </div>
+          <div style="padding:12px 0; display:flex; align-items:center; gap:14px; border-bottom:1px solid var(--hair);">
+            <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Savings account</span><span class="mono" style="font-size:11px; color:var(--ink3);">Emirates NBD ···· 8807</span></div>
+            <span class="tnum" style="font-size:14px; font-weight:600;">96,400.00</span>
+          </div>
+          <div style="padding:12px 0; display:flex; align-items:center; gap:14px;">
+            <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Wio credit facility</span><span class="mono" style="font-size:11px; color:var(--ink3);">Wio · no product name printed</span></div>
+            <span class="tnum" style="font-size:14px; font-weight:600; color:var(--ink2);">0.00</span>
+          </div>
+        </div>
+        <p style="margin:0; padding-top:12px; border-top:1px solid var(--hair); font-size:12.5px; line-height:1.6; color:var(--ink3);">Card repayments appearing on both a card and its funding account are matched into one transfer, so they are never counted as spending.</p>
+      </div>
+
+      <div class="card" style="padding:22px 24px; display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between;">
+          <h2 class="serif" style="margin:0; font-size:20px;">Rewards the banks reported</h2>
+          <span style="font-size:12px; color:var(--ink3);">printed on the statement</span>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <div style="padding:12px 0; display:grid; grid-template-columns:1fr 88px 88px; gap:12px; border-bottom:1px solid var(--hair);">
+            <span class="eyebrow">Card</span><span class="eyebrow" style="text-align:right;">Earned</span><span class="eyebrow" style="text-align:right;">Balance</span>
+          </div>
+          <div style="padding:12px 0; display:grid; grid-template-columns:1fr 88px 88px; gap:12px; border-bottom:1px solid var(--hair); align-items:baseline;">
+            <span style="font-size:13.5px; font-weight:500;">noon VIP <span style="font-size:11.5px; color:var(--ink3);">noon credit</span></span>
+            <span class="tnum" style="font-size:13.5px; text-align:right;">418.60</span>
+            <span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">2,204.15</span>
+          </div>
+          <div style="padding:12px 0; display:grid; grid-template-columns:1fr 88px 88px; gap:12px; border-bottom:1px solid var(--hair); align-items:baseline;">
+            <span style="font-size:13.5px; font-weight:500;">VISA FLEXI <span style="font-size:11.5px; color:var(--ink3);">Plus Points</span></span>
+            <span class="tnum" style="font-size:13.5px; text-align:right;">1,240</span>
+            <span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">18,905</span>
+          </div>
+          <div style="padding:12px 0; display:grid; grid-template-columns:1fr 88px 88px; gap:12px; align-items:baseline;">
+            <span style="font-size:13.5px; font-weight:500;">CBD ONE <span style="font-size:11.5px; color:var(--ink3);">cashback</span></span>
+            <span class="tnum" style="font-size:13.5px; text-align:right;">0.00</span>
+            <span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">61.40</span>
+          </div>
+        </div>
+        <p style="margin:0; padding-top:12px; border-top:1px solid var(--hair); font-size:12.5px; line-height:1.6; color:var(--ink3);">Reported separately from the plan's own maths, so the two can be compared rather than conflated. Units differ by card and are never added together.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"dark":{"editor":"boolean","default":false}}'>
+class Component extends DCLogic {
+  renderVals() { return { mode: this.props.dark ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>

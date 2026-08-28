@@ -1,0 +1,2 @@
+pdfplumber==0.11.10   # MIT — word-level coordinate extraction
+pypdf==6.16.1         # BSD-3 — encryption detection / decryption

@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4338ca; text-decoration: none; } a:hover { color: #4f46e5; }
+    .t { --bg:#fbfbfd; --surface:#ffffff; --surface2:#f7f8fb; --line:#e6e8f0; --hair:#eef0f6;
+      --ink:#14161f; --ink2:#565b70; --ink3:#6b7085; --mute:#9aa0b4;
+      --accent:#4f46e5; --accentInk:#4338ca; --accentSoft:#eeecfe;
+      --ok:#10795a; --okSoft:#e3f2ec; --warn:#96650f; --warnSoft:#fbf0dc; --bad:#b03328; --badSoft:#fbe9e7;
+      --shadow:0 1px 2px rgba(20,22,31,.04),0 1px 3px rgba(20,22,31,.06);
+      --shadowLg:0 2px 4px rgba(20,22,31,.04),0 16px 40px rgba(20,22,31,.10); }
+    .t.dark { --bg:#0d0e14; --surface:#171922; --surface2:#1d202b; --line:#272b38; --hair:#1f222d;
+      --ink:#eceef5; --ink2:#a2a8bd; --ink3:#8d93a8; --mute:#6e7489;
+      --accent:#8b83f7; --accentInk:#b4adfb; --accentSoft:#211f3d;
+      --ok:#6cc39c; --okSoft:#12291f; --warn:#d9a95f; --warnSoft:#2b2214; --bad:#e78477; --badSoft:#2e1a17;
+      --shadow:0 1px 2px rgba(0,0,0,.4);
+      --shadowLg:0 2px 6px rgba(0,0,0,.35),0 20px 48px rgba(0,0,0,.45); }
+    .t { font-family:'Instrument Sans',ui-sans-serif,system-ui,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; }
+    .serif { font-family:'Instrument Serif',Georgia,'Times New Roman',serif; font-weight:400; }
+    .mono { font-family:'Geist Mono',ui-monospace,Menlo,monospace; }
+    .tnum { font-variant-numeric:tabular-nums; }
+    .eyebrow { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); }
+    .navitem { padding:7px 12px; border-radius:6px; font-size:13.5px; font-weight:500; color:var(--ink2); }
+    .navitem.on { background:var(--accentSoft); color:var(--accentInk); font-weight:600; }
+    .kbd { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; border-radius:5px;
+      background:var(--surface2); border:1px solid var(--line); border-bottom-width:2px;
+      font-family:'Geist Mono',monospace; font-size:11px; font-weight:500; color:var(--ink2); }
+    .qrow { padding:11px 14px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--hair); }
+    .pick { padding:9px 12px; display:flex; align-items:center; gap:11px; border-radius:8px; font-size:13.5px; }
+    @keyframes riseIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    @keyframes growX { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+    @keyframes slideIn { from{opacity:0;transform:translateX(18px)} to{opacity:1;transform:none} }
+    .rise { animation:riseIn .55s cubic-bezier(.22,.8,.3,1) both; }
+    .bar { transform-origin:left center; animation:growX .85s cubic-bezier(.22,.8,.3,1) both; }
+    .slide { animation:slideIn .4s cubic-bezier(.22,.8,.3,1) both; }
+    @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+  </style>
+</helmet>
+<div class="t {{mode}}" style="width:1440px; padding-bottom:56px;">
+
+  <div style="border-bottom:1px solid var(--line); background:var(--bg);">
+    <div style="max-width:1120px; margin:0 auto; height:60px; display:flex; align-items:center; gap:28px;">
+      <div style="display:flex; align-items:center; gap:9px;">
+        <span style="width:26px; height:26px; border-radius:7px; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:13px; font-weight:600;">L</span>
+        <span class="serif" style="font-size:19px;">Ledger</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:2px;">
+        <span class="navitem">Money</span><span class="navitem">Plan</span>
+      </div>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:16px;">
+        <span class="navitem on" style="display:inline-flex; align-items:center; gap:7px;">Data
+          <span class="tnum" style="min-width:20px; height:18px; padding:0 6px; border-radius:9px; background:var(--warn); color:var(--surface); font-size:11px; font-weight:600; display:inline-grid; place-items:center;">24</span></span>
+        <span style="width:1px; height:18px; background:var(--line);"></span>
+        <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink3);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          on this machine only</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- sub-nav: Data is a workbench, not a destination -->
+  <div style="border-bottom:1px solid var(--hair); background:var(--surface); box-shadow:var(--shadow);">
+    <div style="max-width:1120px; margin:0 auto; height:50px; display:flex; align-items:center; gap:24px;">
+      <span style="height:49px; display:inline-flex; align-items:center; font-size:14px; font-weight:500; color:var(--ink2);">Statements <span class="mono" style="margin-left:7px; font-size:11px; color:var(--ink3);">82</span></span>
+      <span style="height:49px; display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; border-bottom:2px solid var(--accent);">Fix-ups
+        <span class="tnum" style="min-width:20px; height:18px; padding:0 6px; border-radius:9px; background:var(--warnSoft); color:var(--warn); font-size:11px; font-weight:600; display:inline-grid; place-items:center;">24</span></span>
+      <span style="height:49px; display:inline-flex; align-items:center; font-size:14px; font-weight:500; color:var(--ink2);">Passwords</span>
+      <span style="margin-left:auto; display:inline-flex; align-items:center; gap:9px; font-size:12px; color:var(--ink3);">
+        <span class="tnum">3 of 24 cleared</span>
+        <span style="width:120px; height:6px; border-radius:3px; background:var(--hair); overflow:hidden;"><span class="bar" style="animation-delay:.3s; display:block; height:100%; width:12.5%; background:var(--accent); border-radius:3px;"></span></span>
+      </span>
+    </div>
+  </div>
+
+  <div style="max-width:1120px; margin:0 auto; padding-top:26px; display:flex; flex-direction:column; gap:22px;">
+
+    <div class="rise" style="display:flex; flex-direction:column; gap:8px;">
+      <h1 class="serif" style="margin:0; font-size:32px; letter-spacing:-.01em;">One row at a time, ranked by what it is worth</h1>
+      <p style="margin:0; max-width:82ch; font-size:14px; line-height:1.6; color:var(--ink2);">Until a row is assigned, no category total and no routing plan above it is trustworthy. The queue is sorted by what each row is worth, because the readiness gate is weighted by money rather than by how many rows are left. Figures on this artboard are illustrative.</p>
+    </div>
+
+    <!-- emphasis: one figure IS the story, so one accent against grey -->
+    <div class="rise card" style="animation-delay:60ms; padding:22px 24px; display:flex; flex-direction:column; gap:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between;">
+        <h2 class="serif" style="margin:0; font-size:20px;">Value waiting on a decision — illustrative</h2>
+        <span style="font-size:12px; color:var(--ink3);">all statements · AED</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:11px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="width:124px; font-size:13px; font-weight:600;">Uncategorised</span>
+          <div style="flex-grow:1; height:22px;"><div class="bar" style="animation-delay:.3s; height:22px; width:100%; background:var(--accent); border-radius:0 4px 4px 0;"></div></div>
+          <span class="tnum" style="width:74px; text-align:right; font-size:14px; font-weight:600;">464,285</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="width:124px; font-size:13px; color:var(--ink2);">Fuel</span>
+          <div style="flex-grow:1; height:12px;"><div class="bar" style="animation-delay:.4s; height:12px; width:2.4%; background:var(--mute); opacity:.55; border-radius:0 3px 3px 0;"></div></div>
+          <span class="tnum" style="width:74px; text-align:right; font-size:13px; color:var(--ink2);">11,029</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="width:124px; font-size:13px; color:var(--ink2);">Reimbursable</span>
+          <div style="flex-grow:1; height:12px;"><div class="bar" style="animation-delay:.46s; height:12px; width:1.44%; background:var(--mute); opacity:.55; border-radius:0 3px 3px 0;"></div></div>
+          <span class="tnum" style="width:74px; text-align:right; font-size:13px; color:var(--ink2);">6,698</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="width:124px; font-size:13px; color:var(--ink2);">Transportation</span>
+          <div style="flex-grow:1; height:12px;"><div class="bar" style="animation-delay:.52s; height:12px; width:1.39%; background:var(--mute); opacity:.55; border-radius:0 3px 3px 0;"></div></div>
+          <span class="tnum" style="width:74px; text-align:right; font-size:13px; color:var(--ink2);">6,455</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="width:124px; font-size:13px; color:var(--ink3);">Everything else</span>
+          <div style="flex-grow:1; height:12px;"><div class="bar" style="animation-delay:.58s; height:12px; width:5.27%; background:var(--mute); opacity:.4; border-radius:0 3px 3px 0;"></div></div>
+          <span class="tnum" style="width:74px; text-align:right; font-size:13px; color:var(--ink2);">24,481</span>
+        </div>
+      </div>
+      <p style="margin:0; padding-top:12px; border-top:1px solid var(--hair); font-size:13px; line-height:1.6; color:var(--ink3);">An emphasis form: when one bar dwarfs the rest, that lopsidedness is the finding and the other bars should stay grey. The numbers here are illustrative — in the live data this queue is empty.</p>
+    </div>
+
+    <!-- the inbox -->
+    <div style="display:grid; grid-template-columns:326px 1fr; gap:20px;">
+
+      <div class="rise card" style="animation-delay:120ms; padding:0; overflow:hidden; align-self:start;">
+        <div style="padding:14px 16px; border-bottom:1px solid var(--line); background:var(--surface2); display:flex; align-items:baseline; justify-content:space-between;">
+          <span class="eyebrow">Queue</span><span class="mono" style="font-size:11px; color:var(--ink3);">by value</span>
+        </div>
+        <div class="qrow" style="background:var(--accentSoft); border-left:3px solid var(--accent);">
+          <span class="mono" style="width:16px; font-size:11px; color:var(--accentInk); font-weight:500;">1</span>
+          <div style="flex-grow:1; display:flex; flex-direction:column; gap:1px;">
+            <span style="font-size:13px; font-weight:600;">AL FUTTAIM MOTORS</span>
+            <span class="mono" style="font-size:10.5px; color:var(--ink3);">18 Jun 2026 · noon VIP</span>
+          </div>
+          <span class="tnum" style="font-size:13px; font-weight:600;">41,200</span>
+        </div>
+        <div class="qrow">
+          <span class="mono" style="width:16px; font-size:11px; color:var(--ink3);">2</span>
+          <div style="flex-grow:1; display:flex; flex-direction:column; gap:1px;">
+            <span style="font-size:13px; font-weight:500;">EMAAR PROPERTIES</span>
+            <span class="mono" style="font-size:10.5px; color:var(--ink3);">02 May 2026 · VISA FLEXI</span>
+          </div>
+          <span class="tnum" style="font-size:13px; font-weight:500; color:var(--ink2);">38,750</span>
+        </div>
+        <div class="qrow">
+          <span class="mono" style="width:16px; font-size:11px; color:var(--ink3);">3</span>
+          <div style="flex-grow:1; display:flex; flex-direction:column; gap:1px;">
+            <span style="font-size:13px; font-weight:500;">TASHEEL / AMER CENTRE</span>
+            <span class="mono" style="font-size:10.5px; color:var(--ink3);">11 Mar 2026 · CBD ONE</span>
+          </div>
+          <span class="tnum" style="font-size:13px; font-weight:500; color:var(--ink2);">32,400</span>
+        </div>
+        <div class="qrow">
+          <span class="mono" style="width:16px; font-size:11px; color:var(--ink3);">4</span>
+          <div style="flex-grow:1; display:flex; flex-direction:column; gap:1px;">
+            <span style="font-size:13px; font-weight:500;">DUBAI HOLDING GROUP</span>
+            <span class="mono" style="font-size:10.5px; color:var(--ink3);">27 Jan 2026 · noon VIP</span>
+          </div>
+          <span class="tnum" style="font-size:13px; font-weight:500; color:var(--ink2);">29,100</span>
+        </div>
+        <div class="qrow" style="opacity:.55;">
+          <span style="width:16px; display:grid; place-items:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <div style="flex-grow:1; display:flex; flex-direction:column; gap:1px;">
+            <span style="font-size:13px; font-weight:500; text-decoration:line-through;">ETISALAT BUSINESS</span>
+            <span class="mono" style="font-size:10.5px; color:var(--ok);">→ Telecom</span>
+          </div>
+          <span class="tnum" style="font-size:13px; color:var(--ink3);">24,600</span>
+        </div>
+        <div class="qrow" style="border-bottom:none; justify-content:center; padding:12px;">
+          <span class="mono" style="font-size:11px; color:var(--ink3);">19 more · 258,235 remaining</span>
+        </div>
+      </div>
+
+      <div class="rise slide card" style="animation-delay:180ms; padding:26px; display:flex; flex-direction:column; gap:22px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:20px;">
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <span class="eyebrow">1 of 24 · worth the most</span>
+            <span class="serif" style="font-size:28px; line-height:1.2;">AL FUTTAIM MOTORS</span>
+            <span class="mono" style="font-size:12px; color:var(--ink2);">AL FUTTAIM MOTORS LLC DUBAI AE</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+            <span class="tnum" style="font-size:38px; font-weight:600; letter-spacing:-.025em; line-height:1;">41,200.00</span>
+            <span style="font-size:13px; color:var(--ink2);">18 Jun 2026 · noon VIP ···· 4471</span>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:10px; background:var(--surface2); border:1px solid var(--line);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <span class="mono" style="font-size:11.5px; color:var(--ink2);">Mashreq_noon_Jun_2026.pdf · p.3 line 18 · parser mashreq_noon v4 · reconciled</span>
+          <span style="margin-left:auto; font-size:12px; font-weight:600; color:var(--accentInk);">See the statement line →</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <span class="eyebrow">Assign a category</span>
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;">
+            <span class="pick" style="background:var(--accent); color:#fff; font-weight:600;"><span class="kbd" style="background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.3); color:#fff;">1</span>Transportation</span>
+            <span class="pick" style="border:1px solid var(--line);"><span class="kbd">2</span>Shopping</span>
+            <span class="pick" style="border:1px solid var(--line);"><span class="kbd">3</span>Government</span>
+            <span class="pick" style="border:1px solid var(--line);"><span class="kbd">4</span>Home services</span>
+            <span class="pick" style="border:1px solid var(--line);"><span class="kbd">5</span>Travel</span>
+            <span class="pick" style="border:1px solid var(--line);"><span class="kbd">6</span>Reimbursable</span>
+            <span class="pick" style="border:1px solid var(--line);"><span class="kbd">7</span>Personal</span>
+            <span class="pick" style="border:1px solid var(--line);"><span class="kbd">8</span>Utilities</span>
+            <span class="pick" style="border:1px solid var(--line); color:var(--ink2);"><span class="kbd">9</span>Search all 16…</span>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:11px; padding:13px 16px; border-radius:10px; background:var(--accentSoft);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accentInk)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16v-4M12 8h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          <span style="font-size:13px; color:var(--ink);">Assigning this also teaches the rule <span class="mono" style="font-size:12px; font-weight:500;">AL FUTTAIM MOTORS → Transportation</span>, which clears <strong>4 more</strong> rows in the queue.</span>
+        </div>
+
+        <div style="padding-top:18px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:22px;">
+          <span style="display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--ink2);"><span class="kbd">J</span><span class="kbd">K</span>move</span>
+          <span style="display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--ink2);"><span class="kbd">1</span>–<span class="kbd">9</span>assign</span>
+          <span style="display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--ink2);"><span class="kbd">E</span>exclude</span>
+          <span style="display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--ink2);"><span class="kbd">U</span>undo</span>
+          <span style="display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--ink2);"><span class="kbd">⏎</span>open the evidence</span>
+          <span style="margin-left:auto; font-size:12px; color:var(--ink3);">every change is written to <span class="mono" style="font-size:11px;">category_overrides.csv</span></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"dark":{"editor":"boolean","default":false}}'>
+class Component extends DCLogic {
+  renderVals() { return { mode: this.props.dark ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>

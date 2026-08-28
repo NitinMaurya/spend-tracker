@@ -1,0 +1,2 @@
+/* Shared token block — duplicated into every artboard's <helmet> because
+   artboards share nothing at runtime. Source of truth: Foundations.dc.html */

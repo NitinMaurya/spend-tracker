@@ -1,0 +1,356 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4338ca; text-decoration: none; } a:hover { color: #4f46e5; }
+    .t { --bg:#fbfbfd; --surface:#ffffff; --surface2:#f7f8fb; --line:#e6e8f0; --hair:#eef0f6;
+      --ink:#14161f; --ink2:#565b70; --ink3:#6b7085; --mute:#9aa0b4;
+      --accent:#4f46e5; --accentInk:#4338ca; --accentSoft:#eeecfe;
+      --ok:#10795a; --okSoft:#e3f2ec; --warn:#96650f; --warnSoft:#fbf0dc; --bad:#b03328; --badSoft:#fbe9e7;
+      --shadow:0 1px 2px rgba(20,22,31,.04),0 1px 3px rgba(20,22,31,.06); }
+    .t.dark { --bg:#0d0e14; --surface:#171922; --surface2:#1d202b; --line:#272b38; --hair:#1f222d;
+      --ink:#eceef5; --ink2:#a2a8bd; --ink3:#8d93a8; --mute:#6e7489;
+      --accent:#8b83f7; --accentInk:#b4adfb; --accentSoft:#211f3d;
+      --ok:#6cc39c; --okSoft:#12291f; --warn:#d9a95f; --warnSoft:#2b2214; --bad:#e78477; --badSoft:#2e1a17;
+      --shadow:0 1px 2px rgba(0,0,0,.4); }
+    .t { font-family:'Instrument Sans',ui-sans-serif,system-ui,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; }
+    .serif { font-family:'Instrument Serif',Georgia,'Times New Roman',serif; font-weight:400; }
+    .mono { font-family:'Geist Mono',ui-monospace,Menlo,monospace; }
+    .tnum { font-variant-numeric:tabular-nums; }
+    .eyebrow { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); }
+    .navitem { padding:7px 13px; border-radius:6px; font-size:14px; font-weight:500; color:var(--ink2); }
+    .navitem.on { background:var(--accentSoft); color:var(--accentInk); font-weight:600; }
+    .filt { height:32px; padding:0 12px; display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line);
+      border-radius:8px; background:var(--surface); font-size:13px; font-weight:500; color:var(--ink2); }
+    .trow { padding:12px 20px; display:grid; grid-template-columns:78px 1fr 118px 118px 96px; gap:14px; align-items:center; border-bottom:1px solid var(--hair); }
+    .sect { display:flex; align-items:baseline; gap:12px; }
+    @keyframes riseIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    @keyframes drawLine { from{stroke-dashoffset:760} to{stroke-dashoffset:0} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes popIn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+    @keyframes growX { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+    .rise { animation:riseIn .55s cubic-bezier(.22,.8,.3,1) both; }
+    .drawn { stroke-dasharray:760; animation:drawLine 1.15s cubic-bezier(.4,.1,.2,1) .35s both; }
+    .washed { animation:fadeIn .8s ease-out .75s both; }
+    .dot { transform-box:fill-box; transform-origin:center; animation:popIn .4s cubic-bezier(.34,1.56,.64,1) 1.35s both; }
+    .bar { transform-origin:left center; animation:growX .78s cubic-bezier(.22,.8,.3,1) both; }
+    @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} .drawn{stroke-dasharray:none} }
+  </style>
+</helmet>
+<div class="t {{mode}}" style="width:1440px; padding-bottom:72px;">
+
+  <!-- ── chrome: two destinations, and a utility ─────────────── -->
+  <div style="border-bottom:1px solid var(--line); background:var(--bg);">
+    <div style="max-width:1120px; margin:0 auto; height:62px; display:flex; align-items:center; gap:32px;">
+      <div style="display:flex; align-items:center; gap:9px;">
+        <span style="width:26px; height:26px; border-radius:7px; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:13px; font-weight:600;">L</span>
+        <span class="serif" style="font-size:19px;">Ledger</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:3px;">
+        <span class="navitem on">Money</span>
+        <span class="navitem">Plan</span>
+      </div>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:14px;">
+        <span style="display:inline-flex; align-items:center; gap:7px; height:32px; padding:0 11px; border-radius:8px; border:1px solid var(--line); background:var(--surface); font-size:12.5px; font-weight:500; color:var(--ink2);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          Data
+          <span class="tnum" style="min-width:19px; height:18px; padding:0 6px; border-radius:9px; background:var(--warnSoft); color:var(--warn); font-size:11px; font-weight:600; display:inline-grid; place-items:center;">24</span>
+        </span>
+        <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink3);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          on this machine only
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── scope: one control for the whole screen ──────────────── -->
+  <div style="border-bottom:1px solid var(--hair); background:var(--surface); box-shadow:var(--shadow);">
+    <div style="max-width:1120px; margin:0 auto; height:58px; display:flex; align-items:center; gap:14px;">
+      <div style="display:inline-flex; background:var(--surface2); border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px;">
+        <span style="padding:5px 14px; border-radius:6px; font-size:13px; font-weight:600; background:var(--surface); color:var(--ink); box-shadow:var(--shadow);">Month</span>
+        <span style="padding:5px 14px; border-radius:6px; font-size:13px; font-weight:500; color:var(--ink2);">Year</span>
+        <span style="padding:5px 14px; border-radius:6px; font-size:13px; font-weight:500; color:var(--ink2);">All time</span>
+      </div>
+      <span class="filt" style="font-weight:600; color:var(--ink);">August 2026
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+      <div style="margin-left:auto; display:flex; align-items:flex-end; gap:3px; height:30px;">
+        <div style="width:14px; height:14px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:17px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:15px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:24px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:19px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:18px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:21px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:17px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:16px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:23px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:18px; border-radius:2px 2px 0 0; background:var(--mute); opacity:.34;"></div>
+        <div style="width:14px; height:19px; border-radius:2px 2px 0 0; background:var(--accent);"></div>
+      </div>
+      <span class="mono" style="font-size:11px; color:var(--ink3);">18 months on record</span>
+    </div>
+  </div>
+
+  <div style="max-width:1120px; margin:0 auto; padding-top:28px; display:flex; flex-direction:column; gap:44px;">
+
+    <!-- readiness: only ever shown while something is blocking -->
+    <div class="rise card" style="padding:16px 20px; display:flex; align-items:center; gap:18px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <svg width="34" height="34" viewBox="0 0 36 36" style="transform:rotate(-90deg);">
+          <circle cx="18" cy="18" r="15" fill="none" stroke="var(--hair)" stroke-width="3"/>
+          <circle cx="18" cy="18" r="15" fill="none" stroke="var(--warn)" stroke-width="3" stroke-linecap="round" stroke-dasharray="94.2" stroke-dashoffset="18.8"/>
+        </svg>
+        <div style="display:flex; flex-direction:column;">
+          <span style="font-size:14px; font-weight:600;">Your plan is 4 of 5 conditions from ready</span>
+          <span style="font-size:12px; color:var(--ink3);">3 wallet cards have no Key Facts Statement on file</span>
+        </div>
+      </div>
+      <span style="margin-left:auto; height:34px; padding:0 15px; display:inline-flex; align-items:center; gap:7px; background:var(--accent); color:#fff; border-radius:6px; font-size:13px; font-weight:600;">
+        Add the terms
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </div>
+
+    <!-- ═══ 1 · the glance ═══════════════════════════════════════ -->
+    <div style="display:grid; grid-template-columns:388px 1fr; gap:20px;">
+      <div class="rise card" style="animation-delay:60ms; padding:26px; display:flex; flex-direction:column;">
+        <span class="eyebrow">You spent</span>
+        <span style="margin-top:12px; font-size:56px; font-weight:600; letter-spacing:-.03em; line-height:1;">AED 18,420</span>
+        <div style="margin-top:16px; display:flex; align-items:center; gap:10px;">
+          <span style="display:inline-flex; align-items:center; gap:5px; background:var(--warnSoft); color:var(--warn); border-radius:10px; padding:5px 10px; font-size:12px; font-weight:600;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+            <span class="tnum">620 · 3.5%</span>
+          </span>
+          <span style="font-size:13px; color:var(--ink2);">vs July</span>
+        </div>
+        <div style="margin-top:22px; padding-top:18px; border-top:1px solid var(--hair); display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;">
+          <div style="display:flex; flex-direction:column; gap:3px;"><span class="eyebrow">Transactions</span><span class="tnum" style="font-size:19px; font-weight:600;">63</span></div>
+          <div style="display:flex; flex-direction:column; gap:3px;"><span class="eyebrow">Monthly average</span><span class="tnum" style="font-size:19px; font-weight:600;">17,850</span></div>
+        </div>
+      </div>
+
+      <div class="rise card" style="animation-delay:120ms; padding:22px 24px 14px; display:flex; flex-direction:column; gap:4px;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between;">
+          <h2 class="serif" style="margin:0; font-size:20px;">Month by month</h2>
+          <span style="font-size:12px; color:var(--ink3);">every closed statement · AED</span>
+        </div>
+        <svg viewBox="0 0 640 192" style="width:100%; height:auto; overflow:visible;" role="img" aria-label="Monthly spend, September 2025 to August 2026, peaking at 22,100 in December.">
+          <line x1="40" y1="150" x2="620" y2="150" stroke="var(--line)" stroke-width="1"/>
+          <line x1="40" y1="85"  x2="620" y2="85"  stroke="var(--hair)" stroke-width="1"/>
+          <line x1="40" y1="20"  x2="620" y2="20"  stroke="var(--hair)" stroke-width="1"/>
+          <text x="34" y="154" text-anchor="end" class="tnum" style="font-size:10px; fill:var(--ink3);">0</text>
+          <text x="34" y="89"  text-anchor="end" class="tnum" style="font-size:10px; fill:var(--ink3);">12k</text>
+          <text x="34" y="24"  text-anchor="end" class="tnum" style="font-size:10px; fill:var(--ink3);">24k</text>
+          <path class="washed" d="M40,73 L91,59 L142,67 L193,30 L244,49 L295,56 L345,43 L396,61 L447,64 L498,35 L549,54 L600,50 L600,150 L40,150 Z" fill="var(--accent)" opacity=".10"/>
+          <path class="drawn" d="M40,73 L91,59 L142,67 L193,30 L244,49 L295,56 L345,43 L396,61 L447,64 L498,35 L549,54 L600,50" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <line class="washed" x1="600" y1="50" x2="600" y2="150" stroke="var(--accent)" stroke-width="1" opacity=".3"/>
+          <circle class="dot" cx="600" cy="50" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>
+          <g class="dot">
+            <rect x="556" y="22" width="86" height="22" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="599" y="37" text-anchor="middle" class="tnum" style="font-size:11px; font-weight:600; fill:var(--ink);">18,420</text>
+          </g>
+          <text x="193" y="24" text-anchor="middle" class="tnum" style="font-size:10px; fill:var(--ink3);">peak 22,100</text>
+          <g style="font-size:10px; fill:var(--ink3);">
+            <text x="40" y="172" text-anchor="middle">Sep</text><text x="91" y="172" text-anchor="middle">Oct</text>
+            <text x="142" y="172" text-anchor="middle">Nov</text><text x="193" y="172" text-anchor="middle">Dec</text>
+            <text x="244" y="172" text-anchor="middle">Jan</text><text x="295" y="172" text-anchor="middle">Feb</text>
+            <text x="345" y="172" text-anchor="middle">Mar</text><text x="396" y="172" text-anchor="middle">Apr</text>
+            <text x="447" y="172" text-anchor="middle">May</text><text x="498" y="172" text-anchor="middle">Jun</text>
+            <text x="549" y="172" text-anchor="middle">Jul</text>
+            <text x="600" y="172" text-anchor="middle" style="fill:var(--ink); font-weight:600;">Aug</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ═══ 2 · what you owe — Cards folded in ═══════════════════ -->
+    <div class="rise" style="animation-delay:180ms; display:flex; flex-direction:column; gap:16px;">
+      <div class="sect">
+        <h2 class="serif" style="margin:0; font-size:24px;">What you owe</h2>
+        <span style="font-size:13px; color:var(--ink3);">click any card for its statements, limit history and reported rewards</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px;">
+        <div class="card" style="padding:22px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">noon VIP Credit Card</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">Mashreq ···· 4471</span>
+            </div>
+            <span style="display:inline-flex; align-items:center; gap:5px; background:var(--warnSoft); color:var(--warn); border-radius:10px; padding:5px 10px; font-size:12px; font-weight:600;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              in 8 days</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span class="eyebrow">Total payment due</span>
+            <span class="tnum" style="font-size:30px; font-weight:600; letter-spacing:-.02em; line-height:1;">11,980.00</span>
+            <span style="font-size:13px; color:var(--ink2);">by 3 Sep 2026 · minimum <span class="tnum">599.00</span></span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">Limit in use</span>
+              <span class="tnum" style="font-size:12px; font-weight:600; color:var(--warn);">61% of 20,000</span>
+            </div>
+            <div style="height:8px; border-radius:4px; background:var(--warnSoft); overflow:hidden;"><div class="bar" style="animation-delay:.5s; height:100%; width:61%; border-radius:4px; background:var(--warn);"></div></div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:22px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <span style="font-size:15px; font-weight:600;">VISA FLEXI</span>
+              <span class="mono" style="font-size:11px; color:var(--ink3);">Emirates NBD ···· 0114</span>
+            </div>
+            <span style="background:var(--surface2); color:var(--ink2); border:1px solid var(--line); border-radius:10px; padding:4px 10px; font-size:12px; font-weight:600;">in 17 days</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span class="eyebrow">Total payment due</span>
+            <span class="tnum" style="font-size:30px; font-weight:600; letter-spacing:-.02em; line-height:1;">6,412.50</span>
+            <span style="font-size:13px; color:var(--ink2);">by 12 Sep 2026 · minimum <span class="tnum">320.63</span></span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-size:12px; color:var(--ink2);">Limit in use</span>
+              <span class="tnum" style="font-size:12px; font-weight:600; color:var(--ok);">34% of 19,000</span>
+            </div>
+            <div style="height:8px; border-radius:4px; background:var(--okSoft); overflow:hidden;"><div class="bar" style="animation-delay:.58s; height:100%; width:34%; border-radius:4px; background:var(--ok);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- the quiet four: nothing due, so nothing shouts -->
+      <div class="card" style="padding:6px 0;">
+        <div style="padding:12px 20px; display:grid; grid-template-columns:1fr 130px 130px 150px; gap:16px; align-items:center; border-bottom:1px solid var(--hair);">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">CBD ONE</span><span class="mono" style="font-size:11px; color:var(--ink3);">CBD ···· 2208</span></div>
+          <span style="font-size:12.5px; color:var(--ok); font-weight:600;">settled</span>
+          <span class="tnum" style="font-size:12.5px; color:var(--ink3);">0% of 15,000</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink2);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>terms on file</span>
+        </div>
+        <div style="padding:12px 20px; display:grid; grid-template-columns:1fr 130px 130px 150px; gap:16px; align-items:center; border-bottom:1px solid var(--hair);">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">BLUE FAB SIGNATURE</span><span class="mono" style="font-size:11px; color:var(--ink3);">FAB ···· 6613</span></div>
+          <span style="font-size:12.5px; color:var(--ink2);">in 22 days</span>
+          <span class="tnum" style="font-size:12.5px; color:var(--ink2);">19% of 15,000</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--warn); font-weight:600;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>no terms</span>
+        </div>
+        <div style="padding:12px 20px; display:grid; grid-template-columns:1fr 130px 130px 150px; gap:16px; align-items:center; border-bottom:1px solid var(--hair);">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Emirates Islamic Platinum</span><span class="mono" style="font-size:11px; color:var(--ink3);">Emirates Islamic ···· 9014</span></div>
+          <span style="font-size:12.5px; color:var(--ok); font-weight:600;">settled</span>
+          <span class="mono" style="font-size:12px; color:var(--ink3);">limit not printed</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--warn); font-weight:600;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>no terms</span>
+        </div>
+        <div style="padding:12px 20px; display:grid; grid-template-columns:1fr 130px 130px 150px; gap:16px; align-items:center;">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Dubai First Credit</span><span class="mono" style="font-size:11px; color:var(--ink3);">Dubai First ···· 5527</span></div>
+          <span style="font-size:12.5px; color:var(--bad); font-weight:600;">3 days overdue</span>
+          <span class="tnum" style="font-size:12.5px; color:var(--bad); font-weight:600;">88% of 8,000</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--warn); font-weight:600;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>no terms</span>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12.5px; line-height:1.6; color:var(--ink3);">Balances and limits ignore the period control above — a balance has no period. Settlement accounts and the rewards each bank reported live in a card's drawer, not on this page.</p>
+    </div>
+
+    <!-- ═══ 3 · where it went — Spending folded in ═══════════════ -->
+    <div class="rise" style="animation-delay:240ms; display:flex; flex-direction:column; gap:16px;">
+      <div class="sect">
+        <h2 class="serif" style="margin:0; font-size:24px;">Where it went</h2>
+        <span style="font-size:13px; color:var(--ink3);">August 2026</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+
+        <div class="card" style="padding:22px 24px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between;">
+            <h3 class="serif" style="margin:0; font-size:18px;">By category</h3>
+            <span style="font-size:12px; color:var(--ink3);">one hue, ranked</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:13px;">
+            <div style="display:flex; align-items:center; gap:12px;"><span style="width:108px; font-size:13px; color:var(--ink2);">Dining</span><div style="flex-grow:1; height:14px;"><div class="bar" style="animation-delay:.42s; height:14px; width:100%; background:var(--accent); border-radius:0 4px 4px 0;"></div></div><span class="tnum" style="width:54px; text-align:right; font-size:13px; font-weight:600;">5,120</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><span style="width:108px; font-size:13px; color:var(--ink2);">Groceries</span><div style="flex-grow:1; height:14px;"><div class="bar" style="animation-delay:.48s; height:14px; width:72%; background:var(--accent); border-radius:0 4px 4px 0;"></div></div><span class="tnum" style="width:54px; text-align:right; font-size:13px; font-weight:600;">3,680</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><span style="width:108px; font-size:13px; color:var(--ink2);">Transportation</span><div style="flex-grow:1; height:14px;"><div class="bar" style="animation-delay:.54s; height:14px; width:57%; background:var(--accent); border-radius:0 4px 4px 0;"></div></div><span class="tnum" style="width:54px; text-align:right; font-size:13px; font-weight:600;">2,940</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><span style="width:108px; font-size:13px; color:var(--ink2);">Shopping</span><div style="flex-grow:1; height:14px;"><div class="bar" style="animation-delay:.60s; height:14px; width:47%; background:var(--accent); border-radius:0 4px 4px 0;"></div></div><span class="tnum" style="width:54px; text-align:right; font-size:13px; font-weight:600;">2,410</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><span style="width:108px; font-size:13px; color:var(--ink2);">Fuel</span><div style="flex-grow:1; height:14px;"><div class="bar" style="animation-delay:.66s; height:14px; width:36%; background:var(--accent); border-radius:0 4px 4px 0;"></div></div><span class="tnum" style="width:54px; text-align:right; font-size:13px; font-weight:600;">1,860</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><span style="width:108px; font-size:13px; color:var(--ink2);">Utilities</span><div style="flex-grow:1; height:14px;"><div class="bar" style="animation-delay:.72s; height:14px; width:25%; background:var(--accent); border-radius:0 4px 4px 0;"></div></div><span class="tnum" style="width:54px; text-align:right; font-size:13px; font-weight:600;">1,290</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><span style="width:108px; font-size:13px; color:var(--ink3);">Everything else</span><div style="flex-grow:1; height:14px;"><div class="bar" style="animation-delay:.78s; height:14px; width:22%; background:var(--mute); opacity:.5; border-radius:0 4px 4px 0;"></div></div><span class="tnum" style="width:54px; text-align:right; font-size:13px; font-weight:600; color:var(--ink2);">1,120</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:22px 24px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between;">
+            <h3 class="serif" style="margin:0; font-size:18px;">Standing costs</h3>
+            <span style="font-size:12px; color:var(--ink3);">repeat every month</span>
+          </div>
+          <div style="display:flex; flex-direction:column;">
+            <div style="padding:11px 0; display:flex; align-items:center; gap:14px; border-bottom:1px solid var(--hair);">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">DEWA</span><span style="font-size:11.5px; color:var(--ink3);">Utilities · 12 of 12 months</span></div>
+              <span class="tnum" style="font-size:13.5px; font-weight:600;">688.00</span></div>
+            <div style="padding:11px 0; display:flex; align-items:center; gap:14px; border-bottom:1px solid var(--hair);">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Etisalat</span><span style="font-size:11.5px; color:var(--ink3);">Telecom · 12 of 12 months</span></div>
+              <span class="tnum" style="font-size:13.5px; font-weight:600;">412.00</span></div>
+            <div style="padding:11px 0; display:flex; align-items:center; gap:14px; border-bottom:1px solid var(--hair);">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">RTA Salik</span><span style="font-size:11.5px; color:var(--ink3);">Transportation · 11 of 12 months</span></div>
+              <span class="tnum" style="font-size:13.5px; font-weight:600;">300.00</span></div>
+            <div style="padding:11px 0; display:flex; align-items:center; gap:14px; border-bottom:1px solid var(--hair);">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Netflix</span><span style="font-size:11.5px; color:var(--ink3);">Subscriptions · 12 of 12 months</span></div>
+              <span class="tnum" style="font-size:13.5px; font-weight:600;">56.00</span></div>
+            <div style="padding:11px 0; display:flex; align-items:center; gap:14px;">
+              <div style="flex-grow:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13.5px; font-weight:500;">Spotify</span><span style="font-size:11.5px; color:var(--ink3);">Subscriptions · 9 of 12 months</span></div>
+              <span class="tnum" style="font-size:13.5px; font-weight:600;">21.99</span></div>
+          </div>
+          <div style="padding-top:12px; border-top:1px solid var(--hair); display:flex; align-items:baseline; justify-content:space-between;">
+            <span style="font-size:13px; color:var(--ink2);">Committed before you choose anything</span>
+            <span class="tnum" style="font-size:15px; font-weight:600;">1,477.99</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 4 · the browser — its own filter row ═════════════════ -->
+    <div class="rise" style="animation-delay:300ms; display:flex; flex-direction:column; gap:16px;">
+      <div class="sect">
+        <h2 class="serif" style="margin:0; font-size:24px;">Every transaction</h2>
+        <span style="font-size:13px; color:var(--ink3);">any row opens its statement line</span>
+      </div>
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div style="padding:13px 20px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--line); background:var(--surface2);">
+          <span class="filt" style="background:var(--surface);">All cards <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+          <span class="filt" style="background:var(--surface);">All categories <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+          <span class="filt" style="background:var(--accentSoft); border-color:transparent; color:var(--accentInk); font-weight:600;">Purchases only
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+          <span style="margin-left:auto; font-size:12px; color:var(--ink3);"><span class="tnum">63</span> in August · <span class="tnum">18,420</span></span>
+        </div>
+        <div style="padding:9px 20px; display:grid; grid-template-columns:78px 1fr 118px 118px 96px; gap:14px; border-bottom:1px solid var(--hair);">
+          <span class="eyebrow">Date</span><span class="eyebrow">Merchant</span><span class="eyebrow">Category</span><span class="eyebrow">Card</span><span class="eyebrow" style="text-align:right;">Amount</span>
+        </div>
+        <div class="trow"><span class="tnum" style="font-size:13px; color:var(--ink2);">28 Aug</span><span style="font-size:13.5px; font-weight:500;">ADNOC Al Quoz</span><span style="font-size:12.5px; color:var(--ink2);">Fuel</span><span style="font-size:12.5px; color:var(--ink2);">VISA FLEXI</span><span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">410.00</span></div>
+        <div class="trow"><span class="tnum" style="font-size:13px; color:var(--ink2);">27 Aug</span><span style="font-size:13.5px; font-weight:500;">Talabat</span><span style="font-size:12.5px; color:var(--ink2);">Dining</span><span style="font-size:12.5px; color:var(--ink2);">noon VIP</span><span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">87.50</span></div>
+        <div class="trow"><span class="tnum" style="font-size:13px; color:var(--ink2);">22 Aug</span><span style="font-size:13.5px; font-weight:500;">Carrefour Mall of Emirates</span><span style="font-size:12.5px; color:var(--ink2);">Groceries</span><span style="font-size:12.5px; color:var(--ink2);">noon VIP</span><span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">842.30</span></div>
+        <div class="trow" style="background:var(--warnSoft);"><span class="tnum" style="font-size:13px; color:var(--ink2);">09 Aug</span><span style="font-size:13.5px; font-weight:500;">RTA Salik</span><span style="display:inline-flex; align-items:center; gap:5px; font-size:12.5px; color:var(--warn); font-weight:600;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 9v4M12 17h.01"/></svg>Unsure</span><span style="font-size:12.5px; color:var(--ink2);">VISA FLEXI</span><span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">1,110.05</span></div>
+        <div class="trow"><span class="tnum" style="font-size:13px; color:var(--ink2);">05 Aug</span><span style="font-size:13.5px; font-weight:500;">DEWA</span><span style="font-size:12.5px; color:var(--ink2);">Utilities</span><span style="font-size:12.5px; color:var(--ink2);">VISA FLEXI</span><span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">688.00</span></div>
+        <div class="trow"><span class="tnum" style="font-size:13px; color:var(--ink2);">02 Aug</span><span style="font-size:13.5px; font-weight:500;">Emirates Airlines</span><span style="font-size:12.5px; color:var(--ink2);">Travel</span><span style="font-size:12.5px; color:var(--ink2);">noon VIP</span><span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">2,735.00</span></div>
+        <div class="trow" style="border-bottom:none;"><span class="tnum" style="font-size:13px; color:var(--ink2);">01 Aug</span><span style="font-size:13.5px; font-weight:500;">Etisalat</span><span style="font-size:12.5px; color:var(--ink2);">Telecom</span><span style="font-size:12.5px; color:var(--ink2);">VISA FLEXI</span><span class="tnum" style="font-size:13.5px; font-weight:600; text-align:right;">412.00</span></div>
+        <div style="padding:14px 20px; border-top:1px solid var(--line); background:var(--surface2); display:flex; align-items:center; justify-content:space-between;">
+          <span class="mono" style="font-size:11px; color:var(--ink3);">showing 7 of 63</span>
+          <span style="font-size:13px; font-weight:600; color:var(--accentInk);">Load the rest →</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin:0; max-width:80ch; font-size:12.5px; line-height:1.7; color:var(--ink3);">Every figure on this page came off a statement and reconciles to its own printed total. Nothing left this machine.</p>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"dark":{"editor":"boolean","default":false}}'>
+class Component extends DCLogic {
+  renderVals() { return { mode: this.props.dark ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>
