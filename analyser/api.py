@@ -32,7 +32,8 @@ app.add_middleware(
     CORSMiddleware,
     # The UI dev server picks a free port; 3000 is often taken. Localhost only --
     # this is not a public surface (D-029).
-    allow_origins=[f"http://{h}:{p}" for h in ("localhost", "127.0.0.1")
+    allow_origins=[f"http://{h}:{p}"
+                   for h in ("localhost", "127.0.0.1", "credit-analyser.personal")
                    for p in (3000, 3111, 3999)],
     allow_methods=["*"], allow_headers=["*"],
 )
