@@ -55,6 +55,13 @@ def money(minor, currency="AED", exponent=2):
     return {"minor": int(minor), "currency": currency, "exponent": exponent}
 
 
+def _round_div(total: int, n: int) -> int:
+    """Integer minor units divided with HALF_UP rounding -- never a float (D-002)."""
+    if not n:
+        return 0
+    return int((Decimal(total) / Decimal(n)).quantize(Decimal(1), rounding=ROUND_HALF_UP))
+
+
 def rows(cur):
     return [dict(r) for r in cur.fetchall()]
 
@@ -646,6 +653,92 @@ def by_month():
             "SELECT substr(txn_date,1,7) m, SUM(-amount_minor) spend, COUNT(*) txns"
             "  FROM v_spend GROUP BY m ORDER BY m")
     ]
+
+
+# ---------------------------------------------------------------- income
+
+@app.get("/api/income")
+def income(from_date: Optional[str] = None, to_date: Optional[str] = None):
+    """What came IN, and what it is honestly comparable to.
+
+    Two things make this more than SUM(): coverage and outliers.
+
+    COVERAGE. Income is only known for months where a BANK statement was read,
+    and spending is known for every month where a CARD statement was read. Those
+    two sets are not the same. Reporting "earned X, spent Y" over mismatched
+    windows invents a surplus or a shortfall that the data does not support, so
+    the comparison is computed strictly over the months present in BOTH, and the
+    months excluded are named rather than dropped silently.
+
+    OUTLIERS. A single month carrying a bonus or a back-payment drags the mean
+    well above every ordinary pay cheque. The median is reported alongside it as
+    the typical month, so a one-off cannot masquerade as the new normal.
+    """
+    c = db()
+    w, a = _window(from_date, to_date)
+
+    months = [
+        {"month": r["m"], "earned": money(r["earned"]), "txns": r["txns"]}
+        for r in c.execute(
+            "SELECT substr(txn_date,1,7) m, SUM(amount_minor) earned, COUNT(*) txns"
+            f"  FROM v_income WHERE 1=1{w} GROUP BY m ORDER BY m", a)
+    ]
+    total = c.execute(
+        f"SELECT COALESCE(SUM(amount_minor),0) FROM v_income WHERE 1=1{w}", a).fetchone()[0]
+    n_tx = c.execute(f"SELECT COUNT(*) FROM v_income WHERE 1=1{w}", a).fetchone()[0]
+
+    per_month = sorted(m["earned"]["minor"] for m in months)
+    mean = median = None
+    if per_month:
+        mean = _round_div(sum(per_month), len(per_month))
+        mid = len(per_month) // 2
+        median = (per_month[mid] if len(per_month) % 2
+                  else _round_div(per_month[mid - 1] + per_month[mid], 2))
+
+    # Where the money came from, by the name the statement printed on it.
+    sources = [
+        {"kind": r["txn_type"], "earned": money(r["earned"]), "txns": r["txns"]}
+        for r in c.execute(
+            "SELECT txn_type, SUM(amount_minor) earned, COUNT(*) txns"
+            f"  FROM v_income WHERE 1=1{w} GROUP BY txn_type ORDER BY earned DESC", a)
+    ]
+
+    # The honest comparison: only months where BOTH sides are known.
+    spend_by_month = {
+        r["m"]: r["spent"] for r in c.execute(
+            "SELECT substr(txn_date,1,7) m, SUM(-amount_minor) spent"
+            f"  FROM v_spend WHERE 1=1{w} GROUP BY m", a)
+    }
+    income_by_month = {m["month"]: m["earned"]["minor"] for m in months}
+    both = sorted(set(spend_by_month) & set(income_by_month))
+    earned_both = sum(income_by_month[m] for m in both)
+    spent_both = sum(spend_by_month[m] for m in both)
+
+    return {
+        "total": money(total),
+        "transactions": n_tx,
+        "months": months,
+        "months_covered": len(months),
+        "average": money(mean),
+        "typical": money(median),
+        "sources": sources,
+        "compared": {
+            "months": both,
+            "earned": money(earned_both),
+            "spent": money(spent_both),
+            # Deliberately NOT a "left over" or "saved" figure. Only CARD spending
+            # is subtracted, and the biggest outflows on a current account -- rent,
+            # transfers, cheques -- never touch a card, so earned minus card-spend
+            # is not money kept. Reporting it as a surplus would be the single most
+            # flattering lie this dataset can tell, so the figure is not produced
+            # at all and the share below is named for exactly what it measures.
+            "card_spend_pct": (round(100.0 * spent_both / earned_both, 1)
+                               if earned_both else None),
+        },
+        # Named, not dropped: months where one side of the comparison is missing.
+        "income_only_months": sorted(set(income_by_month) - set(spend_by_month)),
+        "spend_only_months": sorted(set(spend_by_month) - set(income_by_month)),
+    }
 
 
 @app.get("/api/analytics/category/{category}")
@@ -1663,6 +1756,258 @@ def _warm_imports() -> None:
 
 
 _warm_imports()
+
+
+# ---------------------------------------------------------------- ledger
+#
+# One chronological list of EVERY transaction on EVERY account -- the six credit
+# cards, both Emirates NBD bank accounts, the CBD account and the Wio facility.
+#
+# This is deliberately the opposite of /api/analytics/*, which all sit on v_spend
+# and therefore answer "what did I buy". The ledger answers "what happened", so it
+# starts at v_transactions and filters nothing away by default: bank debits, card
+# payments, fees, interest, adjustments and salary all belong in it.
+#
+# Two things the spend views never have to worry about:
+#   · SIGN. amount_minor is signed -- negative leaves, positive arrives. The
+#     ledger never takes an absolute value, and reports money in and money out
+#     as two separate figures rather than one netted lump.
+#   · TRANSFER LEGS. A card payment appears twice, once on the card and once on
+#     the funding account. Summing the ledger naively double counts it, so the
+#     totals below EXCLUDE transfer legs and excluded rows, and say so.
+#
+# Every figure is summed here in SQL. The browser formats and never adds (D-029).
+
+_LEDGER_FROM = (
+    "  FROM v_transactions v"
+    "  JOIN accounts a ON a.account_id = v.account_id"
+    "  LEFT JOIN transactions_raw r ON r.raw_id = v.txn_id"
+)
+
+#: Rows that would be counted twice, or that the user has struck out. Kept OUT of
+#: every total, never out of the listing -- the ledger still shows them, labelled.
+_LEDGER_COUNTABLE = " AND v.excluded = 0 AND v.transfer_group_id IS NULL"
+
+
+def _ledger_where(from_date=None, to_date=None, account_id=None, txn_type=None,
+                  direction=None, q=None, account_type=None, flow=None):
+    """The WHERE fragment shared by the listing, the totals and the facets."""
+    sql, args = "", []
+    if from_date:
+        sql += " AND v.txn_date >= ?"; args.append(from_date)
+    if to_date:
+        sql += " AND v.txn_date <= ?"; args.append(to_date)
+    if account_id:
+        sql += " AND v.account_id = ?"; args.append(account_id)
+    if account_type:
+        sql += " AND a.account_type = ?"; args.append(account_type)
+    if txn_type:
+        # Unrecognised type strings are matched by equality, never by a hardcoded
+        # list, so a type added tomorrow filters correctly without a code change.
+        sql += " AND v.txn_type = ?"; args.append(txn_type)
+    if flow:
+        # Same rule as txn_type: equality against the value the view computed,
+        # so a new effect filters without a code change here.
+        sql += " AND v.flow = ?"; args.append(flow)
+    if direction == "in":
+        sql += " AND v.amount_minor > 0"
+    elif direction == "out":
+        sql += " AND v.amount_minor < 0"
+    if q:
+        like = f"%{q.strip()}%"
+        sql += (" AND (v.merchant LIKE ? OR r.raw_description LIKE ?"
+                "      OR v.category LIKE ? OR v.txn_type LIKE ?)")
+        args += [like, like, like, like]
+    return sql, args
+
+
+@app.get("/api/ledger")
+def ledger(from_date: Optional[str] = None, to_date: Optional[str] = None,
+           account_id: Optional[str] = None, account_type: Optional[str] = None,
+           txn_type: Optional[str] = None, direction: Optional[str] = None,
+           flow: Optional[str] = None,
+           q: Optional[str] = None, limit: int = 100, offset: int = 0):
+    """Every transaction, newest first, with money in and money out kept apart.
+
+    `direction` is "in", "out" or absent. Paging is server side: ~500 rows today,
+    but a ledger only ever grows, so the client asks for a window.
+    """
+    c = db()
+    limit = max(1, min(int(limit), 500))
+    offset = max(0, int(offset))
+    where, args = _ledger_where(from_date, to_date, account_id, txn_type,
+                                direction, q, account_type, flow)
+
+    total = c.execute(f"SELECT COUNT(*) n {_LEDGER_FROM} WHERE 1=1{where}",
+                      args).fetchone()["n"]
+
+    listing = c.execute(
+        "SELECT v.txn_id, v.account_id, v.txn_date, v.posting_date,"
+        "       v.amount_minor, v.currency, v.txn_type, v.merchant, v.category,"
+        "       v.confidence, v.excluded, v.transfer_group_id, v.flow,"
+        "       v.include_in_spending, a.product_name, a.issuer, a.account_type,"
+        "       r.raw_description,"
+        "       CASE WHEN v.amount_minor < 0 THEN 'OUT' ELSE 'IN' END AS direction"
+        f"{_LEDGER_FROM} WHERE 1=1{where}"
+        # Oldest-last, and within a day the biggest movement first, so the eye
+        # lands on the row that mattered.
+        " ORDER BY v.txn_date DESC, ABS(v.amount_minor) DESC, v.txn_id"
+        " LIMIT ? OFFSET ?", args + [limit, offset])
+
+    out = []
+    for r in rows(listing):
+        cur = r.get("currency") or "AED"
+        r["amount"] = money(r.pop("amount_minor"), cur)
+        r["card"] = _card_label(r.get("product_name"), r.get("issuer"), r["account_id"])
+        r["is_transfer"] = r["transfer_group_id"] is not None
+        r["excluded"] = int(r["excluded"] or 0)
+        r["counted"] = not r["is_transfer"] and not r["excluded"]
+        out.append(r)
+
+    # Totals, per currency, because one sum across two currencies is a lie.
+    by_currency = []
+    for r in rows(c.execute(
+        "SELECT v.currency cur,"
+        "       SUM(CASE WHEN v.amount_minor > 0 THEN v.amount_minor ELSE 0 END) mi,"
+        "       SUM(CASE WHEN v.amount_minor < 0 THEN -v.amount_minor ELSE 0 END) mo,"
+        "       SUM(v.amount_minor) net,"
+        "       SUM(v.amount_minor > 0) in_n, SUM(v.amount_minor < 0) out_n,"
+        "       COUNT(*) n"
+        f"{_LEDGER_FROM} WHERE 1=1{where}{_LEDGER_COUNTABLE}"
+        " GROUP BY v.currency ORDER BY v.currency", args)
+    ):
+        cur = r["cur"] or "AED"
+        by_currency.append({
+            "currency": cur,
+            "money_in": money(r["mi"], cur),
+            "money_out": money(r["mo"], cur),
+            # Signed on purpose: negative means the period spent more than it took in.
+            "net": money(r["net"], cur),
+            "in_count": r["in_n"], "out_count": r["out_n"], "counted_rows": r["n"],
+        })
+
+    # The same rows read the OTHER way: not "did money move" but "did my net
+    # worth change". Direction alone reports a card repayment as income and a
+    # wire abroad as a purchase; this axis is what separates them. Both are
+    # published, because both are true answers to different questions.
+    by_flow = []
+    for r in rows(c.execute(
+        "SELECT v.flow, v.currency cur, SUM(v.amount_minor) net,"
+        "       SUM(CASE WHEN v.amount_minor > 0 THEN v.amount_minor ELSE 0 END) mi,"
+        "       SUM(CASE WHEN v.amount_minor < 0 THEN -v.amount_minor ELSE 0 END) mo,"
+        "       COUNT(*) n"
+        f"{_LEDGER_FROM} WHERE 1=1{where} AND v.excluded = 0"
+        " GROUP BY v.flow, v.currency ORDER BY n DESC", args)
+    ):
+        cur = r["cur"] or "AED"
+        by_flow.append({
+            "flow": r["flow"], "currency": cur, "txns": r["n"],
+            "money_in": money(r["mi"], cur), "money_out": money(r["mo"], cur),
+            "net": money(r["net"], cur),
+        })
+
+    omitted = c.execute(
+        "SELECT SUM(v.transfer_group_id IS NOT NULL) legs,"
+        "       SUM(v.excluded = 1) struck,"
+        "       SUM(v.excluded = 1 OR v.transfer_group_id IS NOT NULL) both"
+        f"{_LEDGER_FROM} WHERE 1=1{where}", args).fetchone()
+
+    accounts = [
+        {**r, "card": _card_label(r.get("product_name"), r.get("issuer"), r["account_id"])}
+        for r in rows(c.execute(
+            "SELECT v.account_id, a.product_name, a.issuer, a.account_type,"
+            "       COUNT(*) txns"
+            f"{_LEDGER_FROM} WHERE 1=1" + _ledger_where(from_date, to_date)[0] +
+            " GROUP BY v.account_id ORDER BY txns DESC",
+            _ledger_where(from_date, to_date)[1]))
+    ]
+    flows = rows(c.execute(
+        "SELECT v.flow, COUNT(*) txns"
+        f"{_LEDGER_FROM} WHERE 1=1" + _ledger_where(from_date, to_date)[0] +
+        " GROUP BY v.flow ORDER BY txns DESC",
+        _ledger_where(from_date, to_date)[1]))
+    types = rows(c.execute(
+        "SELECT v.txn_type, COUNT(*) txns"
+        f"{_LEDGER_FROM} WHERE 1=1" + _ledger_where(from_date, to_date)[0] +
+        " GROUP BY v.txn_type ORDER BY txns DESC",
+        _ledger_where(from_date, to_date)[1]))
+
+    span = c.execute(f"SELECT MIN(v.txn_date) lo, MAX(v.txn_date) hi"
+                     f"{_LEDGER_FROM} WHERE 1=1{where}", args).fetchone()
+
+    return {
+        "rows": out,
+        "page": {"limit": limit, "offset": offset, "returned": len(out),
+                 "total": total, "has_more": offset + len(out) < total},
+        "totals": {
+            "by_currency": by_currency,
+            "by_flow": by_flow,
+            "counted_rows": sum(x["counted_rows"] for x in by_currency),
+            "transfer_legs": omitted["legs"] or 0,
+            "excluded_rows": omitted["struck"] or 0,
+            "omitted_rows": omitted["both"] or 0,
+            "basis": ("Money in and money out cover every row in scope except "
+                      "transfer legs and struck-out rows, which would otherwise "
+                      "be counted twice."),
+            "flow_basis": ("Earned, spent, moved, borrowed and repaid answer a "
+                           "different question from money in and money out: not "
+                           "whether money crossed an account, but whether it was "
+                           "yours to begin with. Paying a card is money arriving "
+                           "on that card and no income at all."),
+        },
+        "facets": {"accounts": accounts, "types": types, "flows": flows},
+        "range": {"first": span["lo"], "last": span["hi"]},
+    }
+
+
+@app.get("/api/ledger/calendar")
+def ledger_calendar():
+    """The same year/month shape as /api/analytics/calendar, over EVERY transaction.
+
+    The spend calendar is built on v_spend, so a month that holds only bank
+    activity does not appear in it. The ledger has to offer that month, so it
+    counts its own. `spend` here is money OUT, which is what the month strip is
+    drawing.
+    """
+    c = db()
+    years: dict = {}
+    for r in c.execute(
+        "SELECT substr(txn_date,1,4) y, substr(txn_date,1,7) m,"
+        "       SUM(CASE WHEN amount_minor < 0 THEN -amount_minor ELSE 0 END) out_minor,"
+        "       COUNT(*) txns"
+        "  FROM v_transactions"
+        " WHERE excluded = 0 AND transfer_group_id IS NULL"
+        " GROUP BY m ORDER BY m"
+    ):
+        y = years.setdefault(r["y"], {"year": r["y"], "out_minor": 0,
+                                      "txns": 0, "months": []})
+        y["out_minor"] += r["out_minor"]
+        y["txns"] += r["txns"]
+        y["months"].append({"month": r["m"], "spend": money(r["out_minor"]),
+                            "txns": r["txns"], "out_minor": r["out_minor"]})
+
+    out = []
+    for y in sorted(years.values(), key=lambda x: x["year"], reverse=True):
+        months = y["months"]
+        raw = [m.pop("out_minor") for m in months]
+        for i, m in enumerate(months):
+            prev = raw[i - 1] if i else None
+            m["change"] = money(raw[i] - prev) if prev is not None else None
+            m["change_pct"] = (round(100.0 * (raw[i] - prev) / prev, 1)
+                               if prev else None)
+        out.append({
+            "year": y["year"],
+            "is_current": y["year"] == str(datetime.now().year),
+            "spend": money(y["out_minor"]),
+            "txns": y["txns"],
+            "average_month": money(int(y["out_minor"] / len(months))) if months else None,
+            "busiest_month": None, "quietest_month": None,
+            "months": list(reversed(months)),
+        })
+    current = str(datetime.now().year)
+    default = current if any(y["year"] == current for y in out) else (
+        out[0]["year"] if out else None)
+    return {"years": out, "default_year": default, "current_year": current}
 
 
 @app.get("/api/health")

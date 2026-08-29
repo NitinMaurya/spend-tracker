@@ -34,60 +34,200 @@ _TYPE_RULES = (
 )
 
 
-def classify_txn_type(raw_description, amount_minor, issuer=None):
+# Account kinds. What a sign MEANS depends on which side of the balance sheet
+# the account sits on, and that is the single most useful generic signal there
+# is: on a liability, money-in reduces a debt; on an asset, money-in is a
+# receipt. Nothing below needs to know which bank issued the statement.
+LIABILITY_ACCOUNTS = frozenset({"CREDIT_CARD", "CREDIT_FACILITY", "LOAN"})
+ASSET_ACCOUNTS = frozenset({"BANK", "CURRENT", "SAVINGS", "WALLET"})
+
+# Vocabulary shared by retail bank statements generally, not by one issuer.
+# Each entry is matched against the UPPERCASED description.
+_LOAN_DRAWN = (
+    "QUICK CASH BOOKING", "QUICK CASH", "CASH ON CALL", "LOAN ON CARD",
+    "SMART CASH", "BALANCE TRANSFER", "LOAN DISBURSE", "DISBURSEMENT",
+)
+_LOAN_REPAID = (
+    "EASY PAYMENT PLAN", "INSTALLMENT PLAN", "INSTALMENT PLAN",
+    "INSTALLMENT", "INSTALMENT",
+)
+_TRANSFER_WORDS = (
+    # Bare "TRANSFER"/"TRF" belong here: every compound form below is a special
+    # case of them, and a statement line carrying the word is describing a
+    # movement. Loan drawdowns ("BALANCE TRANSFER") and card settlements
+    # ("TRANSFER PAYMENT RECEIVED") are both resolved above this point.
+    "TRANSFER", "TRF", "TELEGRAPHIC", "TT REF", "REMITTANCE", "BANKNET",
+    "FUND TRANSFER", "FUNDS TRANSFER", "OWN ACCOUNT", "ACCOUNT TRANSFER",
+    "TRANSFER TO", "TRANSFER FROM", "OUTWARD TRF", "INWARD TRF",
+    "TELEGRAPHIC TRF", "NEFT", "RTGS", "IMPS", "UPI", "SEPA", "SWIFT",
+    "ACH ", "GIRO", "STANDING ORDER", "STANDING INSTRUCTION",
+)
+_ATM_WORDS = ("ATM", "CASH WITHDRAWAL", "CASH WDL", "CASH DISPENS")
+_CHEQUE_WORDS = ("CHEQUE", "CHQ", "CLEARING CHEQUES", "CHECK DEPOSIT")
+_SALARY_WORDS = ("SALARY", "PAYROLL", "WAGES")
+_SETTLEMENT_WORDS = (
+    "PAYMENT RECEIVED", "PAYMENTS RECEIVED", "CREDIT REPAYMENT", "REPAYMENT",
+    "AUTOPAY", "AUTO PAY", "THANK YOU", "PAYMENT THRU", "ONLINE PAYMENT",
+    "BILL PAYMENT RECEIVED", "CARD PAYMENT",
+)
+
+
+def _has(desc, words):
+    return any(w in desc for w in words)
+
+
+def _settles_another_provider(desc, known_issuers, own_issuer):
+    """Does this line read as "<a bank you bank with> payment"?
+
+    Two conditions, and both are load-bearing.
+
+    The name is matched as a whole phrase on word boundaries, so "EMIRATES NBD"
+    is found in "Emirates NBD payment" while "EMIRATES AIRLINE" matches nothing,
+    and a single-token issuer like FAB is found in "Blu Fab payment" without
+    also firing on "FABINDIA".
+
+    The name must also sit NEXT TO the word payment, with at most one word
+    between them. Short issuer acronyms are ordinary English -- CBD is a bank
+    here and a product everywhere else -- so mere co-occurrence is not enough:
+    "CBD OIL SHOP PAYMENT" is a purchase, and only adjacency separates it from
+    "Dubai First payment". One intervening word is allowed because issuers put
+    the product in the middle ("Mashreq Noon payment").
+    """
+    own = (own_issuer or "").upper().replace("_", " ").strip()
+    for raw in known_issuers or ():
+        name = (raw or "").upper().replace("_", " ").strip()
+        if not name or name == own:
+            continue
+        n = re.escape(name)
+        if (re.search(rf"\b{n}\b(?:\s+\w+)?\s+PAYMENT\b", desc)
+                or re.search(rf"\bPAYMENT\b(?:\s+\w+)?\s+{n}\b", desc)):
+            return True
+    return False
+
+
+def classify_txn_type(raw_description, amount_minor, issuer=None, account_type=None,
+                      known_issuers=None):
     """Spec §F2: PURCHASE / REFUND / PAYMENT / FEE / INTEREST / ... never guess.
 
-    The SIGN is authoritative in one direction: a positive (money-in) amount can
-    never be a purchase, because inflating spend is the most damaging possible
-    misclassification.
-    """
+    Two signals decide a row, and neither is the issuer's name:
 
-    # Credit-card loans and their repayments are FINANCING, not spending (D-028b).
-    # "QC 12 M @ 0% + 4% PF" is Quick Cash over 12 months; the monthly EMI that
-    # repays it is debt service. Counting either as a purchase double-counts money
-    # the cardholder never spent at a merchant.
+    THE SIGN, which is authoritative in one direction -- a positive (money-in)
+    amount can never be a purchase, because inflating spend is the most damaging
+    possible misclassification.
+
+    THE ACCOUNT KIND, which is what makes the sign mean anything. Money arriving
+    on a LIABILITY is a debt going down: a repayment or a refund, never earnings.
+    Money leaving an ASSET is not automatically a purchase: a wire, a cheque and
+    a cash withdrawal all leave an account without anything being bought. Reading
+    every bank debit as a purchase is what makes a ledger claim you spent your
+    rent at a merchant.
+
+    `account_type` is optional and defaults to the older sign-only behaviour, so
+    a caller that does not know the account still gets a defensible answer.
+    """
     _desc = (raw_description or "").upper()
-    import re as _re
+    text = (raw_description or "").lower()
+    positive = amount_minor is not None and amount_minor > 0
+    negative = amount_minor is not None and amount_minor < 0
+    kind = (account_type or "").upper()
+    is_liability = kind in LIABILITY_ACCOUNTS
+    is_asset = kind in ASSET_ACCOUNTS
 
     # An internal adjustment posted as a matched +/- pair nets to zero. It is
     # bookkeeping, not money moving anywhere.
     if "INTERNAL ADJUSTMENT" in _desc or "REVERSAL PAIR" in _desc:
         return TxnType.ADJUSTMENT
 
-    # Mashreq labels an inbound card payment "inward ipp cc - ln<number>". Confirmed
-    # by the cardholder: these are payments made TO the card, not refunds and not a
-    # loan disbursement. Typing matters -- a refund would reduce that month's spend
-    # (D-016a), which would be wrong here.
+    # Mashreq labels an inbound card payment "inward ipp cc - ln<number>".
+    # Confirmed by the cardholder: payments made TO the card, not refunds and not
+    # a loan disbursement. Typing matters -- a refund would reduce that month's
+    # spend (D-016a), which would be wrong here.
     if "INWARD IPP" in _desc:
         return TxnType.PAYMENT
-    if (_re.search(r"\bQC\s*\d+\s*M\b", _desc)
-            or "QUICK CASH" in _desc          # the loan BOOKING, not just its EMIs
-            or "CASH ON CALL" in _desc
-            or "LOAN ON CARD" in _desc
-            or "SMART CASH" in _desc
-            or "EMI" in _desc
-            or "INSTALLMENT" in _desc or "INSTALMENT" in _desc
-            or _desc.startswith("LOC-")
-            or "EASY PAYMENT PLAN" in _desc
-            or "BALANCE TRANSFER" in _desc):
-        return TxnType.CASH_ADVANCE
-    text = (raw_description or "").lower()
 
+    # Salary. The statement NAMES it, so this is reading the page rather than
+    # inferring intent from an amount that happens to recur monthly. The positive
+    # guard matters: a row that merely mentions salary while money LEAVES (a
+    # salary-advance repayment, a payroll fee) is not income, and typing it as
+    # income would credit earnings that never arrived.
+    if positive and _has(_desc, _SALARY_WORDS):
+        return TxnType.SALARY
+
+    # --- borrowing, and the servicing of it ---------------------------------
+    # Split apart because they are opposite events that used to share one label.
+    # A drawdown puts money in your hand and your debt up; an EMI takes money out
+    # and your debt down. Calling both CASH_ADVANCE made a loan look like an
+    # expense and its own disbursement look like income.
+    fee_flavoured = "FEE" in _desc or "VAT" in _desc
+    if _has(_desc, _LOAN_DRAWN) and not fee_flavoured:
+        # The drawdown itself. On the card it is booked as a debit (the debt) and
+        # on the receiving account as a credit (the cash) -- both are the same
+        # event, and transfer matching pairs them.
+        return TxnType.LOAN_DISBURSED
+    if (re.search(r"\bEMI\b", _desc)
+            or re.search(r"\bQC\s*\d+\s*M\b", _desc)
+            or _has(_desc, _LOAN_REPAID)
+            or _desc.startswith("LOC-")):
+        return TxnType.LOAN_REPAYMENT
+    if _has(_desc, _LOAN_DRAWN) and fee_flavoured:
+        return TxnType.FEE
+
+    # A settlement names WHAT the money was; a channel word names HOW it
+    # travelled. "PAYMENT RECEIVED - FTS & SWIFT" is a card being paid off, and
+    # reading the SWIFT in it as a transfer loses that. What outranks what has to
+    # be decided here, because both vocabularies legitimately appear in one line.
+    if positive and is_liability and _has(_desc, _SETTLEMENT_WORDS):
+        return TxnType.PAYMENT
+
+    # Money LEAVING that calls itself a payment and names one of your own
+    # providers. "Dubai First payment" on a credit facility is that facility
+    # settling a card you hold -- an internal movement, not a purchase.
+    #
+    # The provider name is what makes this safe. "Any debit containing PAYMENT is
+    # a transfer" would swallow genuine purchases at merchants with the word in
+    # their name; requiring the line to name a bank YOU HOLD AN ACCOUNT WITH is
+    # evidence from your own account list rather than a guess about a word. The
+    # account's own issuer is excluded, so a card is never read as paying itself.
+    if negative and known_issuers and _settles_another_provider(
+            _desc, known_issuers, issuer):
+        return TxnType.TRANSFER
+
+    # --- money that moves without being earned or spent ---------------------
+    if _has(_desc, _CHEQUE_WORDS):
+        return TxnType.CHEQUE
+    if _has(_desc, _ATM_WORDS):
+        # A withdrawal on a card is borrowing at cash-advance rates; on a current
+        # account it is simply your own money in a different form.
+        return TxnType.CASH_ADVANCE if is_liability else TxnType.CASH_WITHDRAWAL
+    if _has(_desc, _TRANSFER_WORDS):
+        return TxnType.TRANSFER
+
+    # --- the original keyword table ----------------------------------------
     matched = None
     for txn_type, keywords in _TYPE_RULES:
         if any(k in text for k in keywords):
             matched = txn_type
             break
 
-    positive = amount_minor is not None and amount_minor > 0
-
     if matched is not None:
         if positive and matched in (TxnType.PURCHASE, TxnType.CASH_ADVANCE):
             return TxnType.UNKNOWN
+        # Deliberately NOT reclassifying an outbound "payment" on a liability as
+        # a transfer on the strength of the word alone: that swallows real
+        # merchants ("ONLINE PAYMENT SERVICES LLC"). The provider-name rule above
+        # covers the genuine case with evidence from the account list instead.
         return matched
 
+    # --- fallbacks, decided by which side of the balance sheet we are on ----
     if positive:
-        # Money in, nothing recognised: UNKNOWN beats a confident wrong answer.
+        # Money in that the statement never named, on either kind of account.
+        #
+        # It is tempting to call an unnamed card credit a repayment, since a
+        # credit on a liability must reduce the debt somehow. But issuers label
+        # real repayments -- that is what the line is for -- so an unlabelled
+        # credit carrying a merchant name is far more often a refund, and typing
+        # it as a repayment would leave that month's spending overstated. Neither
+        # answer is supported by the page, so neither is asserted.
         return TxnType.UNKNOWN
     if amount_minor is None:
         return TxnType.UNKNOWN

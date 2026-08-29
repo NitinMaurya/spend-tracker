@@ -9,7 +9,18 @@ class TxnType:
     FEE = "FEE"; INTEREST = "INTEREST"; CASH_ADVANCE = "CASH_ADVANCE"
     CASH_WITHDRAWAL = "CASH_WITHDRAWAL"; REVERSAL = "REVERSAL"
     ADJUSTMENT = "ADJUSTMENT"; TRANSFER = "TRANSFER"; UNKNOWN = "UNKNOWN"
+    # Money in that the statement NAMES. Unnamed credits stay UNKNOWN -- guessing
+    # what a bare inbound transfer was for is exactly what this engine will not do.
+    SALARY = "SALARY"; INCOME = "INCOME"
+    # Money that MOVES without being earned or spent, and the two halves of a
+    # debt. Keeping these apart is what stops a ledger reporting a wire transfer
+    # as a purchase and a loan drawdown as income.
+    CHEQUE = "CHEQUE"
+    LOAN_DISBURSED = "LOAN_DISBURSED"; LOAN_REPAYMENT = "LOAN_REPAYMENT"
     SPEND = frozenset({PURCHASE, CASH_ADVANCE, CASH_WITHDRAWAL})
+    EARNED = frozenset({SALARY, INCOME})
+    MOVED = frozenset({TRANSFER, CHEQUE})
+    DEBT = frozenset({LOAN_DISBURSED, LOAN_REPAYMENT})
 
 
 class Confidence:

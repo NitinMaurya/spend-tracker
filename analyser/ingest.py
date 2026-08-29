@@ -375,6 +375,19 @@ def _store_transactions(conn, account_id, issuer, transactions, raw_ids):
     alias_map = load_alias_map()
     category_map = load_category_map()
 
+    # What a sign MEANS depends on which side of the balance sheet the account
+    # sits on, so typing needs the account kind, not just the issuer's name.
+    row = conn.execute("SELECT account_type FROM accounts WHERE account_id = ?",
+                       (account_id,)).fetchone()
+    account_type = row[0] if row else None
+
+    # Every bank the cardholder actually banks with. A debit that names one of
+    # these AND calls itself a payment is settling another account they hold, not
+    # buying something -- which is knowable from their own account list rather
+    # than from a guess about the word "payment".
+    known_issuers = [r[0] for r in conn.execute(
+        "SELECT DISTINCT issuer FROM accounts WHERE issuer IS NOT NULL")]
+
     stored = 0
     for txn, rid in zip(transactions, raw_ids):
         if rid is None:
@@ -394,7 +407,8 @@ def _store_transactions(conn, account_id, issuer, transactions, raw_ids):
             "category_confidence) VALUES (?,?,?,?,?,?,?,?,?,?)",
             (rid, account_id, txn_date, txn.get("posting_date"), amount,
              txn.get("currency") or "AED",
-             classify_txn_type(description, amount, issuer),
+             classify_txn_type(description, amount, issuer, account_type,
+                               known_issuers),
              merchant, category,
              category_confidence if category else merchant_confidence),
         )

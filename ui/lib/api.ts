@@ -420,6 +420,31 @@ export async function saveWallet(body: {
   return out as { path: string; cards: number; note: string };
 }
 
+export type IncomeMonth = { month: string; earned: Money; txns: number };
+
+export type Income = {
+  total: Money | null;
+  transactions: number;
+  months: IncomeMonth[];
+  months_covered: number;
+  /** Mean month. Skewed by a bonus month -- show `typical` beside it. */
+  average: Money | null;
+  /** Median month: what an ordinary pay cheque actually looks like. */
+  typical: Money | null;
+  sources: { kind: string; earned: Money; txns: number }[];
+  /** Only months where BOTH income and card spending are known. */
+  compared: {
+    months: string[];
+    earned: Money | null;
+    spent: Money | null;
+    /** Card spend as a share of income. NOT a savings rate -- rent and
+     *  transfers leave the current account without touching a card. */
+    card_spend_pct: number | null;
+  };
+  income_only_months: string[];
+  spend_only_months: string[];
+};
+
 export const api = {
   categoryDetail: (category: string, p?: Period) =>
     get<CategoryDetail>(
@@ -433,6 +458,7 @@ export const api = {
   library: () => get<Library>("/api/statements/library"),
   byCategory: (p?: Period) => get<ByCategory>(`/api/analytics/by-category${qs(p)}`),
   trend: () => get<Trend>("/api/analytics/trend"),
+  income: (p?: Period) => get<Income>(`/api/income${qs(p)}`),
   merchants: (n = 10, p?: Period) =>
     get<MerchantRow[]>(`/api/analytics/by-merchant${qs(p, { limit: n })}`),
   recurring: (minMonths = 2) =>
@@ -457,3 +483,82 @@ export const api = {
   addCorrection: (b: { match?: string; canonical?: string; category?: string }) =>
     post<{ written: string[]; note: string }>("/api/corrections", b),
 };
+
+/* ── ledger: every transaction on every account ──────────────────────────────
+ *
+ * Mirrors /api/ledger in analyser/api.py. Unlike everything above it, these rows
+ * are NOT filtered to card spending: bank debits, card payments, fees, interest
+ * and salary all appear. `amount` is therefore SIGNED — negative left, positive
+ * arrived — and must never be shown through formatAbs, which would drop the one
+ * fact that tells a salary from a restaurant bill.
+ *
+ * Money in and money out arrive as two separate figures already summed by the
+ * engine, per currency, with transfer legs left out so nothing is counted twice.
+ */
+
+export type LedgerRow = {
+  txn_id: string; account_id: string; txn_date: string; posting_date: string | null;
+  amount: Money; currency: string;
+  direction: "IN" | "OUT";
+  txn_type: string; merchant: string | null; category: string | null;
+  confidence: string | null; raw_description: string | null;
+  card: string; issuer: string; product_name: string | null; account_type: string;
+  include_in_spending: number;
+  excluded: number; transfer_group_id: string | null;
+  is_transfer: boolean; counted: boolean;
+  /** What the row did to your net worth, as opposed to which way it crossed
+   *  an account. Paying a card is money IN and REPAID at the same time. */
+  flow: LedgerFlow;
+};
+
+export type LedgerFlow =
+  | "EARNED" | "SPENT" | "MOVED" | "BORROWED" | "REPAID"
+  | "REFUNDED" | "NEUTRAL" | "UNKNOWN";
+
+export type LedgerFlowTotal = {
+  flow: LedgerFlow; currency: string; txns: number;
+  money_in: Money; money_out: Money; net: Money;
+};
+
+export type LedgerCurrencyTotal = {
+  currency: string;
+  money_in: Money; money_out: Money; net: Money;
+  in_count: number; out_count: number; counted_rows: number;
+};
+
+export type Ledger = {
+  rows: LedgerRow[];
+  page: { limit: number; offset: number; returned: number; total: number; has_more: boolean };
+  totals: {
+    by_currency: LedgerCurrencyTotal[];
+    by_flow: LedgerFlowTotal[];
+    counted_rows: number; transfer_legs: number; excluded_rows: number;
+    omitted_rows: number; basis: string; flow_basis: string;
+  };
+  facets: {
+    accounts: { account_id: string; card: string; account_type: string;
+                issuer: string; product_name: string | null; txns: number }[];
+    types: { txn_type: string; txns: number }[];
+    flows: { flow: LedgerFlow; txns: number }[];
+  };
+  range: { first: string | null; last: string | null };
+};
+
+export type LedgerQuery = {
+  account_id?: string; account_type?: string; txn_type?: string;
+  direction?: "in" | "out"; flow?: string; q?: string; limit?: number; offset?: number;
+};
+
+export function fetchLedger(p?: Period, f: LedgerQuery = {}): Promise<Ledger> {
+  const extra: Record<string, string | number> = {};
+  for (const [k, v] of Object.entries(f)) {
+    if (v !== undefined && v !== null && v !== "") extra[k] = v as string | number;
+  }
+  return get<Ledger>(`/api/ledger${qs(p, extra)}`);
+}
+
+/** The month/year calendar over EVERY transaction, not just card spending. */
+export function fetchLedgerCalendar() {
+  return get<{ years: CalYear[]; default_year: string | null; current_year: string }>(
+    "/api/ledger/calendar");
+}

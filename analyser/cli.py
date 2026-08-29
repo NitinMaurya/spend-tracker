@@ -29,7 +29,9 @@ import glob
 import json
 import logging
 import os
+import sqlite3
 import sys
+from collections import Counter
 from decimal import Decimal
 
 from analyser import db
@@ -353,6 +355,21 @@ def cmd_ingest(args):
             out(f"          NOT STORED (D-004): {result['reject_reason']}")
             out("          Raw evidence is kept; the rows do not enter analysis "
                 "until the statement closes.")
+
+    # Linking runs on every ingest, not as a chore the user has to remember.
+    # A new statement is precisely what completes a pair whose other leg was
+    # already on file, and until both legs are linked the ledger counts the same
+    # money twice -- once leaving one account and once arriving in another.
+    # Ambiguous clusters are reported, never resolved.
+    from analyser.matching import link_transfers
+    links = link_transfers(conn, apply=True)
+    if links["written"]:
+        out(f"linked    {links['written']} transfer leg(s) into "
+            f"{len(links['linked'])} group(s)")
+    if links["ambiguous"]:
+        out(f"          {len(links['ambiguous'])} ambiguous cluster(s) left "
+            f"unlinked — run `link-transfers` to see them")
+
     conn.close()
     return 1 if failures else 0
 
@@ -926,6 +943,96 @@ def _resolve_documents(conn, target):
     return rows
 
 
+def cmd_reclassify(args):
+    """Re-run transaction typing over stored rows, from the ORIGINAL statement text.
+
+    Typing rules improve; already-ingested rows should not stay wrong just because
+    they were read first. Re-parsing every PDF to get there would be wasteful and
+    would risk changing amounts, so this reads `transactions_raw.raw_description`
+    -- the verbatim line -- and rewrites only `system_txn_type`.
+
+    A user correction always wins: `user_txn_type` is never touched, and rows
+    carrying one are reported as held rather than silently left behind.
+    """
+    from analyser.normalize import classify_txn_type
+
+    conn = db.connect(args.db)
+    conn.row_factory = sqlite3.Row
+    known_issuers = [r[0] for r in conn.execute(
+        "SELECT DISTINCT issuer FROM accounts WHERE issuer IS NOT NULL")]
+    rows = conn.execute(
+        "SELECT t.txn_id, t.system_txn_type, t.user_txn_type, t.amount_minor,"
+        "       t.account_id, a.issuer, a.account_type, r.raw_description"
+        "  FROM transactions t"
+        "  JOIN transactions_raw r ON r.raw_id = t.txn_id"
+        "  JOIN accounts a ON a.account_id = t.account_id"
+    ).fetchall()
+
+    changes, held = [], 0
+    for r in rows:
+        if r["user_txn_type"]:
+            held += 1
+            continue
+        fresh = classify_txn_type(r["raw_description"], r["amount_minor"],
+                                  r["issuer"], r["account_type"], known_issuers)
+        if fresh != r["system_txn_type"]:
+            changes.append((fresh, r["system_txn_type"], r["txn_id"]))
+
+    if not changes:
+        print(f"{len(rows)} transactions, nothing to reclassify."
+              + (f" {held} held by a user override." if held else ""))
+        return 0
+
+    moves = Counter((was, now) for now, was, _ in changes)
+    for (was, now), n in sorted(moves.items(), key=lambda kv: -kv[1]):
+        print(f"  {was:<16} -> {now:<16} {n:>5}")
+    print(f"{len(changes)} of {len(rows)} transactions would be retyped."
+          + (f" {held} held by a user override." if held else ""))
+
+    if not args.yes:
+        print("\nNothing was written. Re-run with --yes to apply.")
+        return 0
+
+    if not args.no_snapshot:
+        snap = db.snapshot(args.db)
+        print(f"snapshot: {snap}")
+    conn.executemany(
+        "UPDATE transactions SET system_txn_type = ? WHERE system_txn_type = ? AND txn_id = ?",
+        changes)
+    conn.commit()
+    print(f"{len(changes)} transactions retyped.")
+    return 0
+
+
+def cmd_link_transfers(args):
+    """Pair the two legs of every internal movement (D-007, D-028c)."""
+    from analyser.matching import link_transfers
+
+    conn = db.connect(args.db)
+    conn.row_factory = sqlite3.Row
+    result = link_transfers(conn, day_window=args.days, apply=False)
+    linked, ambiguous = result["linked"], result["ambiguous"]
+
+    if not linked and not ambiguous:
+        print("No unlinked transfer pairs found.")
+        return 0
+    print(f"{len(linked)} pair(s) can be linked; "
+          f"{len(ambiguous)} cluster(s) are ambiguous and will be left alone.")
+    if ambiguous:
+        print("  Ambiguous clusters are reported, never resolved by guessing --\n"
+              "  a wrong pairing reconciles perfectly and so would be invisible.")
+    if not args.yes:
+        print("\nNothing was written. Re-run with --yes to apply.")
+        return 0
+
+    if not args.no_snapshot:
+        print(f"snapshot: {db.snapshot(args.db)}")
+    result = link_transfers(conn, day_window=args.days, apply=True)
+    print(f"{result['written']} transaction(s) linked into "
+          f"{len(result['linked'])} transfer group(s).")
+    return 0
+
+
 def cmd_forget(args):
     conn = open_db(args)
     target = args.target
@@ -1040,6 +1147,25 @@ def build_parser():
                               help="horizon length (default: %(default)s)")
         analysis.add_argument("--start", help="horizon start, ISO-8601 "
                                               "(default: first month on file)")
+
+    p_reclassify = sub.add_parser(
+        "reclassify",
+        help="re-run transaction typing over stored rows (dry run by default)")
+    p_reclassify.add_argument("--yes", action="store_true",
+                              help="actually write the new types")
+    p_reclassify.add_argument("--no-snapshot", action="store_true",
+                              help="skip the pre-write backup")
+    p_reclassify.set_defaults(func=cmd_reclassify)
+
+    p_link = sub.add_parser(
+        "link-transfers",
+        help="pair the two legs of internal transfers (dry run by default)")
+    p_link.add_argument("--days", type=int, default=5,
+                        help="how far apart the legs may post (default: %(default)s)")
+    p_link.add_argument("--yes", action="store_true", help="actually write the links")
+    p_link.add_argument("--no-snapshot", action="store_true",
+                        help="skip the pre-write backup")
+    p_link.set_defaults(func=cmd_link_transfers)
 
     p_forget = sub.add_parser("forget", help="delete a document or account, "
                                              "with cascade")

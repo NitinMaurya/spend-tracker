@@ -16,6 +16,7 @@ import { Doc, Lock } from "./icons";
 
 const NAV = [
   { href: "/", label: "Money" },
+  { href: "/ledger", label: "Ledger" },
   { href: "/plan", label: "Plan" },
 ];
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   api, ApiDown, defaultPeriod,
   type ByCategory, type LargestRow, type Overview, type Period,
-  type Position, type RecurringRow, type Trend, type Txn,
+  type Income, type Position, type RecurringRow, type Trend, type Txn,
 } from "@/lib/api";
 import { formatAbs, formatMoney } from "@/lib/money";
 import {
@@ -11,6 +11,7 @@ import {
 import { TrendArea } from "@/components/charts";
 import { CountUp, Sparkline } from "@/components/figures";
 import { CategoryDonutPanel } from "@/components/category-panel";
+import { IncomePanel } from "@/components/income-panel";
 import { CategoryTag } from "@/components/category-tag";
 import { Traceable } from "@/components/evidence-drawer";
 import { CardLink } from "@/components/card-drawer";
@@ -64,10 +65,11 @@ export default async function MoneyPage({
   let largest: LargestRow[] = [];
   let recurring: RecurringRow[] = [];
   let txns: Txn[] = [];
+  let income: Income | null = null;
   let gates: Overview | null = null;
 
   try {
-    [overview, positions, trend, byCategory, largest, recurring, txns] = await Promise.all([
+    [overview, positions, trend, byCategory, largest, recurring, txns, income] = await Promise.all([
       api.overview(period),
       api.positions(),
       api.trend(),
@@ -79,6 +81,9 @@ export default async function MoneyPage({
         ...(sp.category ? { category: sp.category } : {}),
         ...(sp.card ? { account_id: sp.card } : {}),
       }).catch(() => []),
+      // Income arrives from bank statements, which may not have been read at all.
+      // Its absence is a normal state, not an error that should blank the page.
+      api.income(period).catch(() => null),
     ]);
     // Readiness is a fact about ALL the data, never about the selected window.
     gates = period.label === "All time" ? overview : await api.overview().catch(() => null);
@@ -354,6 +359,14 @@ export default async function MoneyPage({
         ) : null}
 
         {money}
+        {income && income.months.length ? (
+          <section className="flex flex-col gap-4">
+            <SectionTitle aside="read from bank statements, not cards">
+              What came in
+            </SectionTitle>
+            <IncomePanel income={income} scopeLabel={scopeLabel} />
+          </section>
+        ) : null}
         {owe}
 
         {/* every transaction */}
