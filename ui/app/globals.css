@@ -43,6 +43,14 @@
   --r-card:    16px;
   --r-sheet:   20px;
 
+  /* chart marks: one shared top-light so every ring, bar and dot reads as one
+     material. Neutral only — never a hue, so category identity is untouched. */
+  --mark-hi:     rgb(255 255 255 / .18);
+  --mark-mid:    rgb(255 255 255 / 0);
+  --mark-lo:     rgb(0 0 0 / .11);
+  --mark-shadow: rgb(26 26 24 / .12);
+  --mark-groove: rgb(26 26 24 / .05);
+
   --shadow-sm: 0 1px 2px rgb(26 26 24 / .05), 0 2px 8px rgb(26 26 24 / .04);
   --shadow-md: 0 2px 4px rgb(26 26 24 / .04), 0 12px 28px rgb(26 26 24 / .08);
   --shadow-lg: 0 4px 8px rgb(26 26 24 / .05), 0 24px 56px rgb(26 26 24 / .14);
@@ -72,6 +80,12 @@
     --c1: #1f9e74;  --c2: #cf7a26;  --c3: #4a86dc;
     --c4: #c94a3a;  --c5: #8b74d8;  --c6: #b39023;
 
+    --mark-hi:     rgb(255 255 255 / .12);
+    --mark-mid:    rgb(255 255 255 / 0);
+    --mark-lo:     rgb(0 0 0 / .20);
+    --mark-shadow: rgb(0 0 0 / .45);
+    --mark-groove: rgb(255 255 255 / .05);
+
     --shadow-sm: 0 1px 2px rgb(0 0 0 / .5);
     --shadow-md: 0 2px 6px rgb(0 0 0 / .45), 0 16px 36px rgb(0 0 0 / .5);
     --shadow-lg: 0 4px 10px rgb(0 0 0 / .5), 0 28px 64px rgb(0 0 0 / .6);
@@ -85,6 +99,9 @@
   --warn: #d9a95f; --warn-soft: #2c2415;
   --bad: #e8806b; --bad-soft: #301a16;
   --c1: #1f9e74; --c2: #cf7a26; --c3: #4a86dc; --c4: #c94a3a; --c5: #8b74d8; --c6: #b39023;
+  --mark-hi: rgb(255 255 255 / .12); --mark-mid: rgb(255 255 255 / 0);
+  --mark-lo: rgb(0 0 0 / .20); --mark-shadow: rgb(0 0 0 / .45);
+  --mark-groove: rgb(255 255 255 / .05);
   --shadow-sm: 0 1px 2px rgb(0 0 0 / .5);
   --shadow-md: 0 2px 6px rgb(0 0 0 / .45), 0 16px 36px rgb(0 0 0 / .5);
   --shadow-lg: 0 4px 10px rgb(0 0 0 / .5), 0 28px 64px rgb(0 0 0 / .6);
@@ -161,8 +178,12 @@ html { scrollbar-color: var(--mute) transparent; scrollbar-width: thin; caret-co
 /* ── motion: one authored reveal per screen, nothing loops ──────────────── */
 @keyframes enter    { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes growX    { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes draw     { to { stroke-dashoffset: 0; } }
-@keyframes sweep    { to { stroke-dashoffset: var(--dash-to, 0); } }
+/* Both of these depart from a hidden `from` and rest on the element's OWN
+   inline stroke-dashoffset — there is no `to`, so `forwards` holds the natural
+   value. A `to` that hardcodes 0 would stack every donut arc at the top of the
+   dial and blank the trend line whenever the animation never runs. */
+@keyframes draw     { from { stroke-dashoffset: var(--draw-len, 0); } }
+@keyframes sweep    { from { stroke-dashoffset: var(--sweep-from, 0); } }
 @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn    { from { opacity: 0; transform: scale(.72); } to { opacity: 1; transform: scale(1); } }
 @keyframes slideIn  { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
