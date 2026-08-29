@@ -34,8 +34,7 @@ app.add_middleware(
     # The UI dev server picks a free port; 3000 is often taken. Localhost only --
     # this is not a public surface (D-029).
     allow_origins=[f"http://{h}:{p}"
-                   for h in ("localhost", "127.0.0.1",
-                             "spend-tracker.personal", "credit-analyser.personal")
+                   for h in ("localhost", "127.0.0.1", "spend-tracker.personal")
                    for p in (3000, 3111, 3999)],
     allow_methods=["*"], allow_headers=["*"],
 )

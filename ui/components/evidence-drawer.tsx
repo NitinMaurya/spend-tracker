@@ -18,7 +18,7 @@ import {
 import { api, type Evidence } from "@/lib/api";
 import { formatAbs, formatMoney } from "@/lib/money";
 import { longDate, prettyCategory } from "@/lib/format";
-import { Chip, Eyebrow } from "@/components/ui";
+import { Chip, Label } from "@/components/ui";
 import { Check, Alert, Doc } from "@/components/icons";
 import { Drawer, DrawerSkeleton } from "@/components/drawer";
 
@@ -115,7 +115,7 @@ function EvidenceDrawer({ txnId, onClose }: { txnId: string | null; onClose: () 
           <div className="flex flex-col gap-7 px-6 py-6">
             {/* the figure under inspection */}
             <div className="flex flex-col gap-1.5">
-              <Eyebrow>The figure</Eyebrow>
+              <Label>The figure</Label>
               <p className="tnum text-3xl font-semibold leading-none tracking-[-.02em]">
                 {formatAbs(data.amount)}
               </p>
@@ -146,7 +146,7 @@ function EvidenceDrawer({ txnId, onClose }: { txnId: string | null; onClose: () 
 
             {/* the statement line, verbatim */}
             <div className="flex flex-col gap-2.5">
-              <Eyebrow>What the statement actually printed</Eyebrow>
+              <Label>What the statement actually printed</Label>
               <div className="overflow-hidden rounded-card border border-line bg-surface2">
                 <div className="flex items-center gap-2 border-b border-line px-3 py-2">
                   <span className="mono text-[11px] text-ink3">
@@ -179,7 +179,7 @@ function EvidenceDrawer({ txnId, onClose }: { txnId: string | null; onClose: () 
             {/* the description the categoriser saw */}
             {data.source.raw_description !== data.source.raw_text ? (
               <div className="flex flex-col gap-2">
-                <Eyebrow>The description the categoriser read</Eyebrow>
+                <Label>The description the categoriser read</Label>
                 <p className="mono break-words rounded-card border border-line bg-surface2 px-3 py-2.5 text-[11.5px] leading-relaxed text-ink2" dir="auto">
                   {data.source.raw_description}
                 </p>
@@ -189,17 +189,17 @@ function EvidenceDrawer({ txnId, onClose }: { txnId: string | null; onClose: () 
             {/* provenance */}
             <div className="grid grid-cols-2 gap-x-5 gap-y-4 border-t border-line pt-5">
               <div className="col-span-2 flex flex-col gap-1">
-                <Eyebrow>Statement</Eyebrow>
+                <Label>Statement</Label>
                 <p className="mono break-all text-[12px]">{doc!.file_name}</p>
               </div>
               <div className="flex flex-col gap-1">
-                <Eyebrow>Parser</Eyebrow>
+                <Label>Parser</Label>
                 <p className="mono text-[12px]">
                   {doc!.parser_name} v{doc!.parser_version}
                 </p>
               </div>
               <div className="flex flex-col gap-1">
-                <Eyebrow>Reconciled</Eyebrow>
+                <Label>Reconciled</Label>
                 <span>
                   <Chip
                     tone={STATUS_TONE[doc!.status] ?? "neutral"}
@@ -210,14 +210,14 @@ function EvidenceDrawer({ txnId, onClose }: { txnId: string | null; onClose: () 
                 </span>
               </div>
               <div className="flex flex-col gap-1">
-                <Eyebrow>Card</Eyebrow>
+                <Label>Card</Label>
                 <p className="text-[12.5px]">
                   {data.account.product_name ?? data.account.issuer.replace(/_/g, " ")}
                 </p>
                 <p className="mono text-[11px] text-ink3">{data.account.account_id}</p>
               </div>
               <div className="flex flex-col gap-1">
-                <Eyebrow>Statement date</Eyebrow>
+                <Label>Statement date</Label>
                 <p className="tnum text-[12.5px]">
                   {doc!.statement_date ? longDate(doc!.statement_date) : "not printed"}
                 </p>

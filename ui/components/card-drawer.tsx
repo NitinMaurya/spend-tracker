@@ -14,7 +14,7 @@ import Link from "next/link";
 import { api, type AccountDetail } from "@/lib/api";
 import { formatAbs, formatMoney } from "@/lib/money";
 import { bpsPct, cardName, daysUntil, dueLabel, dueTone, longDate, prettyCategory } from "@/lib/format";
-import { Chip, Eyebrow, Meter } from "@/components/ui";
+import { Chip, Label, Meter } from "@/components/ui";
 import { Alert, ArrowRight, Check, Clock } from "@/components/icons";
 import { Drawer, DrawerSkeleton } from "@/components/drawer";
 import { Traceable } from "@/components/evidence-drawer";
@@ -119,7 +119,7 @@ function CardDrawer({ accountId, onClose }: { accountId: string | null; onClose:
             <div className="flex flex-col gap-4 rounded-card border border-line bg-surface2 p-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <Eyebrow>Total payment due</Eyebrow>
+                  <Label>Total payment due</Label>
                   <p className="tnum text-2xl font-semibold leading-none">
                     {formatAbs(p.total_payment_due)}
                   </p>
@@ -128,7 +128,7 @@ function CardDrawer({ accountId, onClose }: { accountId: string | null; onClose:
                   ) : null}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <Eyebrow>Closing balance</Eyebrow>
+                  <Label>Closing balance</Label>
                   <p className="tnum text-2xl font-semibold leading-none">
                     {formatAbs(p.closing_balance)}
                   </p>
@@ -154,22 +154,22 @@ function CardDrawer({ accountId, onClose }: { accountId: string | null; onClose:
 
           <div className="grid grid-cols-3 gap-4 border-y border-hair py-4">
             <div className="flex flex-col gap-1">
-              <Eyebrow>Spend on record</Eyebrow>
+              <Label>Spend on record</Label>
               <p className="tnum text-lg font-semibold">{formatAbs(data.totals.spend)}</p>
             </div>
             <div className="flex flex-col gap-1">
-              <Eyebrow>Transactions</Eyebrow>
+              <Label>Transactions</Label>
               <p className="tnum text-lg font-semibold">{data.totals.transactions}</p>
             </div>
             <div className="flex flex-col gap-1">
-              <Eyebrow>Months</Eyebrow>
+              <Label>Months</Label>
               <p className="tnum text-lg font-semibold">{data.totals.months}</p>
             </div>
           </div>
 
           {/* statements lead */}
           <div className="flex flex-col gap-3">
-            <Eyebrow>Statements ({data.statements.length})</Eyebrow>
+            <Label>Statements ({data.statements.length})</Label>
             {data.statements.length === 0 ? (
               <p className="text-sm text-ink3">No statement has been read for this card yet.</p>
             ) : (
@@ -205,7 +205,7 @@ function CardDrawer({ accountId, onClose }: { accountId: string | null; onClose:
           {/* what the bank itself reported */}
           {data.rewards.length ? (
             <div className="flex flex-col gap-3">
-              <Eyebrow>Rewards the bank reported</Eyebrow>
+              <Label>Rewards the bank reported</Label>
               <div className="flex flex-col">
                 {data.rewards.slice(0, 8).map((r, i) => (
                   <div
@@ -237,7 +237,7 @@ function CardDrawer({ accountId, onClose }: { accountId: string | null; onClose:
           {/* recent spending */}
           {data.transactions.length ? (
             <div className="flex flex-col gap-3">
-              <Eyebrow>Recent spending</Eyebrow>
+              <Label>Recent spending</Label>
               <div className="flex flex-col">
                 {data.transactions.slice(0, 12).map((t) => (
                   <div

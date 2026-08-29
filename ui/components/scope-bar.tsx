@@ -67,12 +67,12 @@ export function ScopeBar({
   const peak = stripYear.months.reduce((n, m) => Math.max(n, Math.abs(m.spend.minor)), 1);
 
   return (
-    <div className="border-b border-hair bg-surface shadow-card">
-      <div className="mx-auto flex max-w-[70rem] flex-wrap items-center gap-3 px-6 py-3">
+    <div className="border-b border-line bg-surface">
+      <div className="mx-auto flex max-w-[76rem] flex-wrap items-center gap-3 px-6 py-3.5">
         <div
           role="group"
           aria-label="Period"
-          className="inline-flex gap-0.5 rounded-[8px] border border-line bg-surface2 p-[3px]"
+          className="inline-flex gap-1 rounded-full border border-line bg-surface2 p-1"
         >
           {MODES.map((m) => {
             const on = m.id === mode;
@@ -82,8 +82,8 @@ export function ScopeBar({
                 type="button"
                 onClick={() => switchMode(m.id)}
                 aria-pressed={on}
-                className={`rounded-control px-3.5 py-[5px] text-[13px] transition-colors ${
-                  on ? "bg-surface font-semibold text-ink shadow-card" : "font-medium text-ink2 hover:text-ink"
+                className={`rounded-full px-4 py-1.5 text-[13px] transition-colors ${
+                  on ? "bg-accent font-bold text-white" : "font-semibold text-ink2 hover:text-ink"
                 }`}
               >
                 {m.label}
@@ -93,7 +93,7 @@ export function ScopeBar({
         </div>
 
         {mode === "month" ? (
-          <label className="inline-flex h-8 items-center rounded-[8px] border border-line bg-surface pl-3 pr-1 text-[13px] font-semibold">
+          <label className="inline-flex h-9 items-center rounded-full border border-line bg-surface pl-4 pr-2 text-[13px] font-bold">
             <span className="sr-only">Month</span>
             <select
               value={label}
@@ -113,7 +113,7 @@ export function ScopeBar({
         ) : null}
 
         {mode === "year" ? (
-          <label className="inline-flex h-8 items-center rounded-[8px] border border-line bg-surface pl-3 pr-1 text-[13px] font-semibold">
+          <label className="inline-flex h-9 items-center rounded-full border border-line bg-surface pl-4 pr-2 text-[13px] font-bold">
             <span className="sr-only">Year</span>
             <select
               value={/^\d{4}$/.test(label) ? label : (newestYear ?? "")}
@@ -142,7 +142,7 @@ export function ScopeBar({
               <span
                 key={m.month}
                 title={`${shortMonth(m.month)} · ${formatAbs(m.spend)}`}
-                className={`w-[13px] rounded-t-[2px] ${on ? "bg-accent" : "bg-mute opacity-[.34]"}`}
+                className={`w-[13px] rounded-t-[3px] transition-colors ${on ? "bg-accent" : "bg-mute opacity-40"}`}
                 style={{ height: `${h}px` }}
               />
             );

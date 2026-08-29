@@ -24,7 +24,7 @@ import {
 import { formatAbs, formatMoney } from "@/lib/money";
 import { bpsPct, longDate, prettyCategory } from "@/lib/format";
 import {
-  Aside, Card, CardTitle, Chip, Code, Eyebrow, PageTitle, SectionTitle, State,
+  Aside, Card, CardTitle, Chip, Code, Label, PageTitle, SectionTitle, State,
 } from "@/components/ui";
 import { Alert, ArrowRight, Check, Cross, Info, Plus } from "@/components/icons";
 
@@ -189,7 +189,7 @@ function PlanView({
     <>
       <section className="grid gap-5 lg:grid-cols-[24rem_1fr]">
         <Card className="rise flex flex-col p-6">
-          <Eyebrow>{worthIt ? "Routing would earn you" : "Routing would earn you"}</Eyebrow>
+          <Label>{worthIt ? "Routing would earn you" : "Routing would earn you"}</Label>
           <p className="hero-figure mt-3">{formatAbs(p.annual_gain)}</p>
           <p className="mt-1.5 text-sm text-ink2">
             a year more than you earn today, after annual fees
@@ -455,7 +455,7 @@ function Confirm({
                     </span>
                   </div>
                   <label className="flex flex-col gap-1">
-                    <Eyebrow>Annual fee ({a.currency})</Eyebrow>
+                    <Label>Annual fee ({a.currency})</Label>
                     <input
                       inputMode="decimal"
                       value={d.annualFee}
@@ -477,7 +477,7 @@ function Confirm({
                 {/* pull the extracted rules */}
                 <div className="flex flex-wrap items-end gap-3 rounded-card border border-line bg-surface2 p-4">
                   <label className="flex flex-col gap-1">
-                    <Eyebrow>Look up terms for</Eyebrow>
+                    <Label>Look up terms for</Label>
                     <input
                       value={d.lookup}
                       onChange={(e) => patch(a.account_id, { lookup: e.target.value })}
@@ -531,9 +531,9 @@ function Confirm({
                   </p>
                 ) : (
                   <div className="flex flex-col gap-3">
-                    <Eyebrow>
+                    <Label>
                       What it pays — assign each quoted rate to your categories
-                    </Eyebrow>
+                    </Label>
                     {d.tiers.map((t, i) => (
                       <div
                         key={t.key}

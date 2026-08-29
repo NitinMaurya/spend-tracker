@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   // The engine binds to 127.0.0.1, so the app gets opened on that host as often
   // as on localhost. Without this, dev-only chunk requests 403 and client
   // components silently never hydrate.
-  allowedDevOrigins: ["127.0.0.1", "spend-tracker.personal", "credit-analyser.personal"],
+  allowedDevOrigins: ["127.0.0.1", "spend-tracker.personal"],
 
   async redirects() {
     return [

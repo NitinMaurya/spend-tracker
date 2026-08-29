@@ -27,16 +27,16 @@ export function Chrome({ fixups }: { fixups: number | null }) {
   const onData = pathname.startsWith("/data");
 
   return (
-    <header className="border-b border-line bg-bg">
-      <div className="mx-auto flex max-w-[70rem] flex-wrap items-center gap-x-8 gap-y-3 px-6 py-3.5">
+    <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[76rem] flex-wrap items-center gap-x-7 gap-y-3 px-6 py-3">
         <Link href={withScope("/")} className="flex items-center gap-2.5">
           <span
             aria-hidden
-            className="grid h-[26px] w-[26px] place-items-center rounded-[7px] bg-accent text-[13px] font-semibold text-white"
+            className="grid h-8 w-8 place-items-center rounded-[10px] bg-accent text-[14px] font-extrabold text-white"
           >
             S
           </span>
-          <span className="serif text-[19px]">Spend Tracker</span>
+          <span className="text-[16px] font-extrabold tracking-[-.02em]">Spend Tracker</span>
         </Link>
 
         <nav aria-label="Main" className="flex items-center gap-1">
@@ -47,9 +47,9 @@ export function Chrome({ fixups }: { fixups: number | null }) {
                 key={n.href}
                 href={withScope(n.href)}
                 aria-current={active ? "page" : undefined}
-                className={`rounded-control px-3.5 py-1.5 text-sm transition-colors ${
+                className={`rounded-full px-4 py-1.5 text-[14px] transition-colors ${
                   active
-                    ? "bg-accentSoft font-semibold text-accentInk"
+                    ? "bg-accentSoft font-bold text-accentInk"
                     : "font-medium text-ink2 hover:text-ink"
                 }`}
               >
@@ -63,7 +63,7 @@ export function Chrome({ fixups }: { fixups: number | null }) {
           <Link
             href="/data"
             aria-current={onData ? "page" : undefined}
-            className={`inline-flex h-8 items-center gap-2 rounded-control border px-2.5 text-[12.5px] font-medium transition-colors ${
+            className={`inline-flex h-9 items-center gap-2 rounded-full border px-3.5 text-[13px] font-semibold transition-colors ${
               onData
                 ? "border-transparent bg-accentSoft text-accentInk"
                 : "border-line bg-surface text-ink2 hover:text-ink"

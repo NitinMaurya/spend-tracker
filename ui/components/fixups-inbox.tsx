@@ -25,7 +25,7 @@ import {
 } from "@/lib/api";
 import { formatAbs } from "@/lib/money";
 import { longDate, prettyCategory } from "@/lib/format";
-import { Card, CardTitle, Chip, Code, Eyebrow, Kbd, SectionTitle, State } from "@/components/ui";
+import { Card, CardTitle, Chip, Code, Label, Kbd, SectionTitle, State } from "@/components/ui";
 import { Alert, ArrowRight, Check, Info } from "@/components/icons";
 import { Traceable } from "@/components/evidence-drawer";
 
@@ -306,9 +306,9 @@ export function FixupsInbox() {
               <Card className="slide-in flex flex-col gap-5 p-6">
                 <div className="flex flex-wrap items-start justify-between gap-5">
                   <div className="flex flex-col gap-1.5">
-                    <Eyebrow>
+                    <Label>
                       {cursor + 1} of {pending.length} left
-                    </Eyebrow>
+                    </Label>
                     <span className="serif text-[26px] leading-tight">
                       {focused.merchant ?? "Merchant not printed"}
                     </span>
@@ -340,7 +340,7 @@ export function FixupsInbox() {
                 {/* the picker */}
                 <div className="flex flex-col gap-2.5">
                   <div className="flex flex-wrap items-center gap-3">
-                    <Eyebrow>Assign a category</Eyebrow>
+                    <Label>Assign a category</Label>
                     <input
                       ref={searchRef}
                       value={query}
