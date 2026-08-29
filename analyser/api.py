@@ -7,6 +7,7 @@ money -- every figure comes from analyser/domain and is serialised as
 Run:  .venv/bin/python -m analyser.api
 """
 import json
+import logging
 import os
 import sqlite3
 from datetime import datetime
@@ -1619,6 +1620,49 @@ def get_plan(months: int = 12):
             "moves_for_80pct": headline,
         },
     }
+
+
+# ---------------------------------------------------------------- import warmup
+#
+# Endpoints import their heavy dependencies lazily, which keeps startup quick but
+# is not thread-safe: sync endpoints run in a threadpool, so two requests can
+# import the same package while it is still initialising and one of them sees a
+# half-built entry in sys.modules. That surfaced as
+#
+#     KeyError: 'analyser.domain'   (from `from analyser.domain.routing import route`)
+#
+# and, because an unhandled exception bypasses CORSMiddleware, the browser only
+# ever saw "No 'Access-Control-Allow-Origin' header" -- a CORS message for what
+# was really an import race.
+#
+# Importing them once here, at module scope and single-threaded, keeps the lazy
+# style at the call sites while guaranteeing every module is fully built before
+# the first request is served.
+def _warm_imports() -> None:
+    import importlib
+
+    for name in (
+        "analyser.cli",
+        "analyser.corrections",
+        "analyser.domain.model",
+        "analyser.domain.rewards",
+        "analyser.domain.routing",
+        "analyser.domain.value",
+        "analyser.ingest",
+        "analyser.parsers",
+        "analyser.pdfaccess",
+        "analyser.secrets",
+    ):
+        try:
+            importlib.import_module(name)
+        except Exception:                                  # noqa: BLE001
+            # An optional dependency missing here must not stop the API booting;
+            # the endpoint that needs it will raise its own error, in context.
+            logging.getLogger("analyser.api").debug(
+                "could not warm %s", name, exc_info=True)
+
+
+_warm_imports()
 
 
 @app.get("/api/health")
