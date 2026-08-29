@@ -18,7 +18,7 @@ const ui = Instrument_Sans({ subsets: ["latin"], variable: "--font-ui" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "Ledger — where your money goes",
+  title: "Spend Tracker — where your money goes",
   description: "Track where your money goes, and find out which card is worth using.",
 };
 

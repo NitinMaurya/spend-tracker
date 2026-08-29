@@ -1,4 +1,4 @@
-# Credit Analyser
+# Spend Tracker
 
 Reads your own credit-card statements, works out where the money actually goes,
 and tells you which card to put each kind of spending on.

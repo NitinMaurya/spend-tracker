@@ -28,7 +28,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(ROOT, "data", "analyser.db")
 HOST, PORT = "127.0.0.1", 8787
 
-app = FastAPI(title="Credit Analyser", docs_url="/api/docs")
+app = FastAPI(title="Spend Tracker", docs_url="/api/docs")
 app.add_middleware(
     CORSMiddleware,
     # The UI dev server picks a free port; 3000 is often taken. Localhost only --
@@ -1672,7 +1672,7 @@ def health():
 
 def main():
     import uvicorn
-    print(f"Credit Analyser API — http://{HOST}:{PORT}/api/docs  (localhost only)")
+    print(f"Spend Tracker API — http://{HOST}:{PORT}/api/docs  (localhost only)")
     uvicorn.run(app, host=HOST, port=PORT, log_level="warning")
 
 

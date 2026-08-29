@@ -34,9 +34,9 @@ export function Chrome({ fixups }: { fixups: number | null }) {
             aria-hidden
             className="grid h-[26px] w-[26px] place-items-center rounded-[7px] bg-accent text-[13px] font-semibold text-white"
           >
-            L
+            S
           </span>
-          <span className="serif text-[19px]">Ledger</span>
+          <span className="serif text-[19px]">Spend Tracker</span>
         </Link>
 
         <nav aria-label="Main" className="flex items-center gap-1">

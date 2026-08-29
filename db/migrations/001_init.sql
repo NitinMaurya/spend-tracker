@@ -1,4 +1,4 @@
--- Credit Analyser — initial schema
+-- Spend Tracker — initial schema
 -- Money is ALWAYS stored as INTEGER minor units (fils). Never REAL.
 -- Dates are ALWAYS ISO-8601 TEXT (YYYY-MM-DD).
 
