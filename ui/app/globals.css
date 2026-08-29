@@ -168,17 +168,19 @@ html { scrollbar-color: var(--mute) transparent; scrollbar-width: thin; caret-co
 @keyframes slideIn  { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 
 /* Exponential ease-out, from an already-visible default where it matters. */
-.enter   { animation: enter .6s cubic-bezier(.16,1,.3,1) both; }
-.barGrow { transform-origin: left center; animation: growX .85s cubic-bezier(.16,1,.3,1) both; }
-.drawn   { animation: draw 1.2s cubic-bezier(.32,.72,.28,1) .25s both; }
-.sweep   { animation: sweep 1.1s cubic-bezier(.32,.72,.28,1) both; }
-.washIn  { animation: fadeIn .9s ease-out .55s both; }
-.popIn   { transform-box: fill-box; transform-origin: center; animation: popIn .5s cubic-bezier(.16,1,.3,1) 1.15s both; }
-.sheetIn { animation: slideIn .42s cubic-bezier(.16,1,.3,1) both; }
+/* Reserved for a single deliberate entrance. The dashboard's cards do NOT
+   use it: one identical reveal on every section is scattered motion, not an
+   authored moment. */
+.enter   { animation: enter .6s cubic-bezier(.16,1,.3,1) .1s forwards; }
+.barGrow { transform-origin: left center; animation: growX .85s cubic-bezier(.16,1,.3,1) forwards; }
+.drawn   { animation: draw 1.2s cubic-bezier(.32,.72,.28,1) forwards; }
+.sweep   { animation: sweep 1.1s cubic-bezier(.32,.72,.28,1) forwards; }
+.washIn  { animation: fadeIn .9s ease-out .25s forwards; }
+.popIn   { transform-box: fill-box; transform-origin: center; animation: popIn .5s cubic-bezier(.16,1,.3,1) .85s forwards; }
+.sheetIn { animation: slideIn .42s cubic-bezier(.16,1,.3,1) forwards; }
 
 @media (prefers-reduced-motion: reduce) {
   .enter, .barGrow, .drawn, .sweep, .washIn, .popIn, .sheetIn { animation: none; }
-  .drawn, .sweep { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
   * { transition-duration: .01ms !important; }
 }
 

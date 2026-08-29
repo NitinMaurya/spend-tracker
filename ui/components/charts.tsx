@@ -97,10 +97,10 @@ export function CategoryDonut({
                   strokeDashoffset={off}
                   opacity={dim ? 0.28 : 1}
                   style={{
-                    // sweep animates dashoffset from a fully-closed ring
-                    ["--dash-to" as string]: String(off),
-                    strokeDashoffset: off + C,
-                    animationDelay: "180ms",
+                    // rests at its final offset; the sweep starts from a closed ring
+                    ["--sweep-from" as string]: String(off + C),
+                    strokeDashoffset: off,
+                    animationDelay: "120ms",
                     transition: "opacity .18s ease-out",
                   }}
                 />
@@ -265,7 +265,7 @@ export function TrendArea({
       <g className="washIn"><path d={area} fill="url(#trendWash)" /></g>
       <path className="drawn" d={line} fill="none" stroke="var(--accent)" strokeWidth="2.25"
             strokeLinejoin="round" strokeLinecap="round"
-            style={{ strokeDasharray: dash, strokeDashoffset: dash }} />
+            style={{ strokeDasharray: dash, ["--draw-len" as string]: String(dash) }} />
 
       <g className="washIn">
         <line x1={x(markI)} y1={y(vals[markI])} x2={x(markI)} y2={BASE}

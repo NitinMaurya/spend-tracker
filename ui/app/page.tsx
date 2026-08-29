@@ -15,6 +15,7 @@ import { CategoryTag } from "@/components/category-tag";
 import { Traceable } from "@/components/evidence-drawer";
 import { CardLink } from "@/components/card-drawer";
 import { ScopeBar } from "@/components/scope-bar";
+import { EngineDownPanel } from "@/components/engine-down";
 import {
   Card, CardTitle, Chip, Code, Label, Meter, PageTitle, SectionTitle, State, TableWrap,
 } from "@/components/ui";
@@ -25,10 +26,10 @@ export const dynamic = "force-dynamic";
 /* ─────────────────────────────────────────────────────────────────────────
    Money — the dashboard.
 
-   Hierarchy is decided by the state of the data, not fixed in the layout.
-   Anything overdue or due within a week outranks analysis, because a missed
-   payment costs real money. Absent that, the spending read leads, which is the
-   weekly sit-down job and the only thing a stranger cloning this will have.
+   Fixed order, set by the user: the figure and the graphs lead, the cards sit
+   below them, and the transaction table stays last as the deep detail. Urgency
+   is not lost to the ordering because overdue cards still raise the alert strip
+   at the top of the page.
    ───────────────────────────────────────────────────────────────────────── */
 
 function utilTone(bps: number | null): "ok" | "warn" | "bad" {
@@ -110,7 +111,6 @@ export default async function MoneyPage({
     return d >= 0 && d <= 7;
   });
   const urgent = [...overdue, ...soon];
-  const leadsWithMoney = urgent.length === 0;              // the state-driven hierarchy
 
   const readiness = gates ?? overview;
   const failing = readiness.gates.filter((g) => g.failing);
@@ -137,7 +137,7 @@ export default async function MoneyPage({
             const tone = dueTone(days);
             const util = p.utilisation_bps;
             return (
-              <Card key={p.account_id} className="enter flex flex-col gap-5">
+              <Card key={p.account_id} className="flex flex-col gap-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col gap-0.5">
                     <CardLink accountId={p.account_id} className="text-[15px] font-bold tracking-[-.01em]">
@@ -178,7 +178,7 @@ export default async function MoneyPage({
       )}
 
       {quiet.length ? (
-        <Card pad={false} className="enter overflow-hidden">
+        <Card pad={false} className="overflow-hidden">
           <TableWrap>
             <table className="w-full min-w-[34rem] text-sm">
               <caption className="sr-only">Cards with nothing due</caption>
@@ -222,7 +222,7 @@ export default async function MoneyPage({
     <>
       {/* the glance */}
       <section className="grid gap-5 lg:grid-cols-[26rem_1fr]">
-        <Card className="enter flex flex-col justify-between gap-6">
+        <Card className="flex flex-col justify-between gap-6">
           <div className="flex flex-col gap-2">
             <Label>You spent</Label>
             <CountUp
@@ -264,7 +264,7 @@ export default async function MoneyPage({
           </div>
         </Card>
 
-        <Card className="enter flex flex-col gap-3">
+        <Card className="flex flex-col gap-3">
           <CardTitle aside={`every closed statement · ${byCategory.total?.currency ?? "AED"}`}>
             Month by month
           </CardTitle>
@@ -274,12 +274,12 @@ export default async function MoneyPage({
 
       {/* where it went */}
       <section className="grid items-start gap-5 lg:grid-cols-[1.15fr_1fr]">
-        <Card className="enter flex flex-col gap-6">
+        <Card className="flex flex-col gap-6">
           <CardTitle aside={scopeLabel}>Where it went</CardTitle>
           <CategoryDonutPanel rows={catRows} total={byCategory.total} />
         </Card>
 
-        <Card className="enter flex flex-col gap-4">
+        <Card className="flex flex-col gap-4">
           <CardTitle aside="seen in 3+ months">Standing costs</CardTitle>
           {recurring.length === 0 ? (
             <p className="text-sm text-ink3">Nothing repeats often enough yet to count as a standing cost.</p>
@@ -320,7 +320,7 @@ export default async function MoneyPage({
 
       <main id="main" className="mx-auto flex max-w-[76rem] flex-col gap-10 px-6 pb-20 pt-7">
         {urgent.length ? (
-          <div className="enter flex flex-wrap items-center gap-4 rounded-card border border-bad/25 bg-badSoft px-5 py-4">
+          <div className="flex flex-wrap items-center gap-4 rounded-card border border-bad/25 bg-badSoft px-5 py-4">
             <Alert size={18} className="shrink-0 text-bad" />
             <p className="text-[14.5px] font-bold text-bad">
               {overdue.length
@@ -336,7 +336,7 @@ export default async function MoneyPage({
         {failing.length ? (
           <Link
             href="/data"
-            className="enter flex flex-wrap items-center gap-4 rounded-card border border-line bg-surface px-5 py-4 shadow-card transition-shadow hover:shadow-lift"
+            className="flex flex-wrap items-center gap-4 rounded-card border border-line bg-surface px-5 py-4 shadow-card transition-shadow hover:shadow-lift"
           >
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-warnSoft text-warn">
               <Alert size={17} />
@@ -353,7 +353,8 @@ export default async function MoneyPage({
           </Link>
         ) : null}
 
-        {leadsWithMoney ? <>{money}{owe}</> : <>{owe}{money}</>}
+        {money}
+        {owe}
 
         {/* every transaction */}
         <section className="flex flex-col gap-4">
@@ -361,7 +362,7 @@ export default async function MoneyPage({
             {sp.category ? prettyCategory(sp.category) : "Every transaction"}
           </SectionTitle>
 
-          <Card pad={false} className="enter overflow-hidden">
+          <Card pad={false} className="overflow-hidden">
             <div className="flex flex-wrap items-center gap-2.5 border-b border-line bg-surface2 px-5 py-3.5">
               {sp.category || sp.card ? (
                 <Link
@@ -462,12 +463,10 @@ function EngineDown() {
       <PageTitle sub="The interface is fine. The local engine is not answering.">
         Nothing to show right now
       </PageTitle>
-      <State title="Start the engine from the project root, then reload.">
-        <Code>.venv/bin/python -m analyser.api</Code>
-        <p className="mt-3 text-[12.5px] text-ink3">
-          Nothing leaves this machine. The UI only ever talks to 127.0.0.1.
-        </p>
-      </State>
+      <EngineDownPanel />
+      <p className="text-[12.5px] text-ink3">
+        Nothing leaves this machine. The UI only ever talks to 127.0.0.1.
+      </p>
     </Shell>
   );
 }

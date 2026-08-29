@@ -27,6 +27,7 @@ import {
   Aside, Card, CardTitle, Chip, Code, Label, PageTitle, SectionTitle, State,
 } from "@/components/ui";
 import { Alert, ArrowRight, Check, Cross, Info, Plus } from "@/components/icons";
+import { EngineDownPanel } from "@/components/engine-down";
 
 /* ── draft model ─────────────────────────────────────────────────────────── */
 
@@ -143,9 +144,7 @@ export function PlanScreen() {
 
   if (down) {
     return (
-      <State title="The engine is not running, so there is nothing to plan from.">
-        <Code>.venv/bin/python -m analyser.api</Code>
-      </State>
+      <EngineDownPanel />
     );
   }
   if (failed) return <State title={failed} tone="bad" />;

@@ -9,9 +9,10 @@ Craft bar: Copilot Money and Monarch. Seed `db8fa467`.
 - **The engine computes, the interface displays.** No arithmetic on money in
   TypeScript. The count-up tween is display only: it seeds and rests on the exact
   server-formatted string and never determines a reported value.
-- **Hierarchy is decided by data state, not layout.** Anything overdue or due
-  within a week outranks analysis. Absent that, spending leads, which is also
-  what a stranger cloning the repo will see.
+- **Fixed order, set by the user.** The figure and the graphs lead, the cards sit
+  below them, and the transaction table stays last as the deep detail. Urgency is
+  not lost to the ordering: overdue cards raise an alert strip at the top of the
+  page regardless of where the card grid sits.
 - **No eyebrows.** Headings carry their own weight. `Label` exists only above a
   value inside a stat tile, in sentence case.
 
@@ -106,3 +107,9 @@ trend span the full column, well past the 8px marker.
 
 Every screen ships loading, empty, error and engine-down. One `State` component,
 one copy source. Copy names the problem and the recovery.
+
+The engine-down state is not a dead end. `EngineDownPanel` polls health every two
+seconds and refreshes the route the moment the engine answers, so starting the
+engine visibly resolves the page instead of leaving the reader to guess whether a
+manual reload is needed. It is the only error a local-first tool routinely
+produces, so it gets the only recovery path.

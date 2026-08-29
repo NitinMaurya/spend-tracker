@@ -100,7 +100,7 @@ export function Sparkline({
         strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ strokeDasharray: 400, strokeDashoffset: 400 }}
+        style={{ strokeDasharray: 400, ["--draw-len" as string]: "400" }}
       />
       <circle className="popIn" cx={lastX} cy={lastY} r="2.75" fill="var(--accent)" />
     </svg>

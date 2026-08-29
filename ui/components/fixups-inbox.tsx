@@ -25,6 +25,7 @@ import {
 } from "@/lib/api";
 import { formatAbs } from "@/lib/money";
 import { longDate, prettyCategory } from "@/lib/format";
+import { EngineDownPanel } from "@/components/engine-down";
 import { Card, CardTitle, Chip, Code, Label, Kbd, SectionTitle, State } from "@/components/ui";
 import { Alert, ArrowRight, Check, Info } from "@/components/icons";
 import { Traceable } from "@/components/evidence-drawer";
@@ -158,9 +159,7 @@ export function FixupsInbox() {
 
   if (down) {
     return (
-      <State title="The engine is not running, so there is nothing to tidy.">
-        <Code>.venv/bin/python -m analyser.api</Code>
-      </State>
+      <EngineDownPanel />
     );
   }
   if (!rows) return <p className="text-sm text-ink3">Reading the queue…</p>;
